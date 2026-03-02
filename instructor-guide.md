@@ -6,38 +6,44 @@
 
 ## What This Module Is About
 
-This module transitions learners from:
+This module marks a turning point in the course.
 
-> Designing how agents think → to controlling how agents act.
+Up to this point, learners have understood:
 
-Up to this point, learners understand:
+- What agents are  
+- How reasoning works  
+- How prompts shape behavior  
+- How architecture structures autonomy  
 
-- What agents are (Session 1)  
-- How reasoning loops operate (Session 3)  
-- How architecture shapes autonomy (Session 2)  
-- How prompts govern behavior across time (Session 6)  
+Now we move from:
 
-This session introduces a critical shift:
+> Designing how agents think  
+to  
+> Controlling how agents act.
 
-> Tools are the boundary between cognition and consequence.
+This is the session where agents stop being advisors and start being operators.
 
-Without tools, agents generate text.  
-With tools, agents modify systems, send communications, move money, and trigger workflows.
+Without tools, an agent generates text.  
+With tools, it can:
 
-This module is about:
+- Search the web  
+- Read or update a spreadsheet  
+- Send an email  
+- Trigger a workflow  
+- Modify a record in a system  
 
-- Categorizing tool types  
-- Understanding tool risk levels  
-- Configuring tools safely  
-- Designing approval gates and escalation  
-- Preventing uncontrolled agency  
+That shift introduces real-world consequence.
+
+This module is not about integrations.  
+It is about controlled agency.
 
 Learners should leave understanding:
 
-- That tools are capability multipliers  
-- That tool configuration is a security decision  
-- That autonomy must be calibrated per action  
-- That every agent must have a fallback path  
+- The different categories of tools  
+- The risk profile of each category  
+- How to configure tools safely in no-code platforms  
+- When humans must remain in the loop  
+- Why autonomy must be scoped — not assumed  
 
 ---
 
@@ -45,12 +51,12 @@ Learners should leave understanding:
 
 By the end of this module, learners should be able to:
 
-- Categorize tools by capability and risk profile  
-- Explain why read/write boundaries matter  
-- Design a properly scoped tool schema  
-- Implement least-privilege configuration  
-- Define escalation and approval thresholds  
-- Architect human-in-the-loop intervention deliberately  
+- Identify and categorize common agent tools  
+- Assess risk by reversibility and impact  
+- Configure a tool safely in a no-code environment  
+- Restrict scope using least-privilege principles  
+- Define clear approval thresholds  
+- Architect a deliberate human-in-the-loop design  
 
 ---
 
@@ -58,329 +64,353 @@ By the end of this module, learners should be able to:
 
 - Tools as execution layer  
 - Five tool categories  
-- Risk matrix & reversibility  
-- Authentication patterns  
-- Schema design principles  
-- Least privilege architecture  
-- Error handling strategy  
-- Human-in-the-loop triggers  
-- Approval gate pattern  
-- Controlled autonomy  
+- Risk levels and reversibility  
+- Tool descriptions as behavioral control  
+- Minimum access configuration  
+- Failure handling strategy  
+- Approval gates  
+- Escalation design  
+- Responsible autonomy  
 
 ---
 
-# 1. Tools as Execution Architecture  
+# 1. The Tool Landscape: Categories and Capabilities  
+**Time:** ~20 minutes  
+
+## Purpose
+
+Help learners understand:
+
+> Tools define the real-world impact surface of the agent.
+
+An LLM mistake may generate wrong text.  
+A tool mistake may change a system permanently.
+
+Frame this clearly before diving into categories.
+
+---
+
+## Teaching Strategy
+
+For each category:
+
+- Ask: What could go wrong?
+- Ask: Is it reversible?
+- Ask: Who owns the risk?
+
+Make this interactive.  
+Have learners answer verbally before revealing the “risk level.”
+
+---
+
+## Category 1: Search and Information Retrieval  
+**Risk Level: Low**
+
+Examples:
+- Web search  
+- Reading Google Drive documents  
+- Querying a database  
+- Pulling live inventory data  
+
+Teaching analogy:
+
+> Giving the agent a library card.
+
+It can read — but not change.
+
+### Key Teaching Points
+
+- These tools are read-only  
+- Primary risk is misinformation  
+- Access must still be restricted  
+
+Ask:
+
+- If the agent retrieves incorrect data, what happens next?
+- Should it have access to all company documents?
+
+---
+
+## Category 2: Data Processing and Calculation  
+**Risk Level: Medium**
+
+Examples:
+- Updating a spreadsheet  
+- Extracting information from a PDF  
+- Performing refund calculations  
+
+Teaching analogy:
+
+> Giving the agent a calculator and shared spreadsheet access.
+
+Changes are real and visible to others.
+
+### Key Teaching Points
+
+- Write access introduces risk  
+- Testing should begin in read-only mode  
+- Changes propagate quickly  
+
+Ask:
+
+- What happens if it writes incorrect data?
+- Who notices first?
+
+---
+
+## Category 3: Communication and Notification  
+**Risk Level: High**
+
+Examples:
+- Sending emails  
+- Posting in Slack  
+- Scheduling calendar invites  
+- Sending SMS  
+
+Teaching analogy:
+
+> Giving the agent your inbox.
+
+Once sent → cannot be undone.
+
+### Critical Teaching Moment
+
+Ask:
+
+- What is the reputational blast radius of a wrong email?
+- Should this default to draft mode?
+
+Emphasize:
+
+> External communication should default to draft + review.
+
+---
+
+## Category 4: System Actions (Create, Update, Delete)  
+**Risk Level: Very High**
+
+Examples:
+- Updating CRM records  
+- Triggering workflows  
+- Processing refunds  
+- Deleting files  
+
+Teaching analogy:
+
+> Giving the agent system administrator access.
+
+Every action changes reality.
+
+### Key Teaching Points
+
+Before enabling these tools, answer:
+
+1. What exactly can it change?
+2. Up to what threshold can it act alone?
+3. What requires approval?
+
+---
+
+## Category 5: Human Handoff and Escalation  
+**Risk Level: Low (Risk-Reducing)**
+
+Examples:
+- Sending approval requests  
+- Routing to a human  
+- Creating summary for review  
+
+Teaching analogy:
+
+> A trained employee who knows when to ask their manager.
+
+### Core Message
+
+Every agent must have an escalation path.
+
+An agent without escalation is overconfident by design.
+
+---
+
+## Tool Risk Table (Discuss Live)
+
+| Category | Risk Level | Reversible? | Needs Approval? |
+|-----------|------------|--------------|-----------------|
+| Search & Retrieval | Low | N/A | No |
+| Data Processing | Medium | Sometimes | Sometimes |
+| Communication | High | Rarely | Often |
+| System Actions | Very High | Rarely/Never | Yes |
+| Escalation | Low | N/A | No |
+
+Have learners reflect:
+
+- Which category exists in their lab agent?
+- Which one worries them most?
+
+---
+
+# 2. Connecting and Configuring Tools Safely  
 **Time:** ~15 minutes  
 
 ## Purpose
 
-Shift learners from:
+Demystify what “connect a tool” actually means.
 
-> “Tools are integrations”  
+Connecting a tool involves three decisions:
 
-to:
-
-> “Tools define the real-world impact surface of the agent.”
-
-An agent’s reasoning layer can fail safely.  
-A tool layer failure can cause financial loss, security breach, or reputational damage.
+1. What it does  
+2. What it can access  
+3. What it cannot do  
 
 ---
 
-## Key Teaching Points
+## Step 1: Tool Description as Behavioral Control
 
-### Tools Are the Agent’s Hands
+The description is not documentation.  
+It is instruction.
 
-Reinforce prior concept:
+Show contrast:
 
-- LLM = Brain  
-- Tools = Hands  
-- Prompt = Behavioral Control Layer  
-- Orchestrator = Execution Supervisor  
+Weak:
+> "Google Sheets Tool"
 
-Without tools → simulation  
-With tools → real-world consequence  
-
-Ask learners:
-
-- What is the first irreversible action your current agent could take?
-- Who approved that design?
-
----
-
-# 2. The Tool Landscape: Categories and Capabilities  
-**Time:** ~20 minutes  
-
-This section should be interactive.
-
-As you introduce each category, ask:
-
-- What is the blast radius if this tool misfires?
-- Is it reversible?
-- Who owns the risk?
-
----
-
-## Category 1: Search & Retrieval (Low Risk)
-
-### Characteristics
-- Read-only  
-- No state modification  
-- External or internal knowledge access  
-
-### Risks
-- Data leakage  
-- Incorrect retrieval  
-- Hallucination masking  
-
-**Teaching Prompt**
-
-“If this tool gives wrong data, what happens?”
-
-Emphasize:
-
-> Retrieval errors corrupt reasoning.
-
----
-
-## Category 2: Data Processing & Computation (Medium Risk)
-
-### Characteristics
-- Executes logic  
-- Performs math  
-- Transforms data  
-
-### Risks
-- Sandbox escape  
-- Data corruption  
-- Spreadsheet overwrites  
+Strong:
+> "Use this tool to read the Sales Pipeline spreadsheet when the user asks about lead status. Do not use it to write or modify data."
 
 Ask:
 
-- Should this have write access to production?
-- Where should sandbox boundaries exist?
+- What happens if the description is vague?
+- How does that affect predictability?
 
 ---
 
-## Category 3: Communication & Notification (High Risk)
+## Step 2: Granting Permission
 
-### Characteristics
-- Sends messages  
-- Creates events  
-- Notifies external parties  
+Permissions may be:
 
-### Risks
-- Irreversible messaging  
-- Legal exposure  
-- Brand damage  
+- OAuth login  
+- API key  
+- Prebuilt connector  
 
-Critical discussion:
+### Critical Rule
 
-> An email cannot be unsent.  
-> Should this default to draft mode?
-
----
-
-## Category 4: System Actions & Write Operations (Very High Risk)
-
-### Characteristics
-- Modifies records  
-- Processes payments  
-- Grants permissions  
-
-### Risks
-- Financial loss  
-- Security vulnerability  
-- Regulatory violations  
+Grant minimum access.
 
 Ask:
 
-- What is the undo cost?
-- Who audits these actions?
+- Does it need full Drive access?
+- Does it need to send emails — or only draft?
 
 ---
 
-## Category 5: Human Escalation (Low Risk, High Value)
+## Step 3: Scope Restriction
 
-### Characteristics
-- Pauses automation  
-- Routes to human  
-- Enables approval gates  
+Show safe configuration examples:
 
-Teaching point:
-
-> Lack of escalation is a design failure.
-
----
-
-## Tool Risk Matrix Discussion
-
-Have learners fill in:
-
-| Category | Reversible? | Needs Approval? | Owner |
-|----------|-------------|----------------|-------|
-
-This becomes input for the lab.
-
----
-
-# 3. Connecting and Configuring Tools Safely  
-**Time:** ~20 minutes  
-
-## Purpose
-
-Demystify “connect your tool.”
-
-Tool configuration has four architectural layers:
-
-1. Authentication  
-2. Schema  
-3. Scope restriction  
-4. Error handling  
-
----
-
-## Authentication Patterns
-
-Discuss:
-
-- API keys  
-- OAuth  
-- Webhooks  
-
-Ask:
-
-- Where should credentials live?
-- What happens if logs leak?
+| Tool | Risky | Safer |
+|------|--------|--------|
+| Google Sheets | All sheets | One specific sheet |
+| Gmail | Send enabled | Draft only |
+| Slack | All channels | One channel |
+| Workflow tool | All workflows | One workflow |
 
 Reinforce:
 
-> Credentials never belong in prompts.
+> Scope defines blast radius.
 
 ---
 
-## Schema as Behavioral Constraint
-
-Explain that schema is:
-
-> Prompt-level guardrail for tool invocation.
-
-Critical principles:
-
-- Verb-based naming  
-- Clear negative guidance  
-- Enum constraints  
-- Required fields  
-
-Ask learners:
-
-“What happens if `new_status` is free text?”
-
----
-
-## Least Privilege Architecture
-
-Principle:
-
-> Minimize blast radius.
-
-Interactive prompt:
-
-- What permission would you remove first from your current agent?
-
----
-
-## Error Handling Protocol
-
-Three failure classes:
-
-- Transient  
-- Data mismatch  
-- Authorization failure  
+## Step 4: Failure Handling
 
 Ask:
 
-- Should the agent retry?
-- Should it escalate?
-- Should it refuse?
+What should happen if:
+
+- The connection times out?
+- The data comes back empty?
+- The API rejects the request?
+
+Define:
+
+- Retry once  
+- Inform user  
+- Escalate for critical tools  
+
+Failure policy should be written before launch.
 
 ---
 
-# 4. Human-in-the-Loop Architecture  
-**Time:** ~20 minutes  
+# 3. Human-in-the-Loop: When Agents Should Not Act Alone  
+**Time:** ~10 minutes  
 
 ## Purpose
 
 Reframe autonomy.
 
-Autonomy is not binary.  
-It is scoped per action.
+Autonomy is not about removing humans.  
+It is about defining boundaries clearly.
 
 ---
 
-## Four Escalation Triggers
+## Four Human Triggers
 
-### 1. Impact Threshold  
-Define financial or operational boundary.
+### 1. High Impact
 
-### 2. Irreversibility  
-Hard-to-undo actions require approval.
+Define thresholds:
 
-### 3. Ambiguity  
-Low confidence → escalate.
+| Action | Autonomous | Approval Required |
+|--------|------------|------------------|
+| Refund | ≤ $200 | > $200 |
+| Email | 1 recipient template | Multi-recipient custom |
 
-### 4. Sensitive Context  
-Legal, regulatory, emotional scenarios.
+These are business decisions — not AI decisions.
+
+---
+
+### 2. Irreversible Actions
 
 Ask:
 
-- Which trigger applies most in your industry?
+- Can this be undone easily?
+
+If no → approval required.
 
 ---
 
-## Approval Gate Pattern
+### 3. Ambiguity
 
-Structured flow:
+If intent unclear → clarify or escalate.
 
-Agent prepares action →  
-Calls approval tool →  
-Human approves →  
-Agent executes  
-
-Have learners design one approval gate for their lab agent.
+Agents should not guess.
 
 ---
 
-# 5. Break  
+### 4. Sensitive Context
+
+Legal, health, safety, distress.
+
+Human empathy > automation.
+
+---
+
+## Three Human Patterns
+
+1. Draft & Review  
+2. Approval Gate  
+3. Full Escalation  
+
+Clarify:
+
+Human-in-the-loop is not weakness.  
+It is responsible system design.
+
+---
+
+# 4. Break  
 **Time:** ~10 minutes  
 
-Reflection prompts:
-
-- Where is your agent over-permissioned?
-- Where is approval missing?
-- What action worries you most?
-
 ---
 
-# 6. Lab Transition  
-**Time:** ~60 minutes  
-
-Frame:
-
-> “You are not connecting tools.  
-> You are defining controlled agency.”
-
-Learners must:
-
-- Choose 3 tool categories  
-- Define risk profile  
-- Write a scoped schema  
-- Define authentication pattern  
-- Define error handling behavior  
-- Define at least one approval threshold  
-- Define one escalation path  
-
-Encourage production mindset.
+# 5. Lab: Tool Integration Challenge  
 
 ---
 
@@ -389,29 +419,29 @@ Encourage production mindset.
 
 ## Key Takeaways
 
-- Tools define impact surface  
-- Risk varies by category  
-- Least privilege reduces blast radius  
-- Schema design controls invocation  
-- Escalation is a feature, not a failure  
-- Autonomy must be earned  
+- Tools create real-world impact  
+- Risk increases with write access  
+- Scope restriction limits damage  
+- Descriptions guide behavior  
+- Human checkpoints are essential  
+- Autonomy must be scoped  
 
-> The most dangerous agent is not the smartest.  
-> It is the one with unchecked permissions.
+> The danger is not intelligence.  
+> The danger is unchecked execution.
 
 ---
 
 ## Reflection Questions
 
 - Which tool category is highest risk in your organization?
-- What is currently over-permissioned?
 - What action should never be autonomous?
 - Where would an approval gate reduce risk most?
+- What is currently over-permissioned?
 
 ---
 
-## Next Steps
+## Next Session
 
-Next module: **Memory and Learning**
+**Memory and Learning**
 
-Learners will move from execution control to state persistence — exploring how agents remember, adapt, and improve across sessions.
+Next, learners will explore how agents persist state, summarize interactions, and improve over time — without losing control.
