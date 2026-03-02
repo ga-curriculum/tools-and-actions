@@ -30,8 +30,8 @@ By the end of this session, students will be able to:
 | # | Segment | Duration |
 |---|---------|----------|
 | 1 | The Tool Landscape: Categories and Capabilities | 15 min |
-| 2 | Connecting and Configuring Tools Safely | 15 min |
-| 3 | Human-in-the-Loop: When Agents Should Not Act Alone | 15 min |
+| 2 | Connecting and Configuring Tools Safely | 20 min |
+| 3 | Human-in-the-Loop: When Agents Should Not Act Alone | 10 min |
 | 4 | Break | 10 min |
 | 5 | Lab | 60 min |
 | 6 | Wrap-Up & Reflection | 5 min |
@@ -52,9 +52,12 @@ These tools give the agent access to information that exists outside its trainin
 
 <img width="695" height="176" alt="image" src="https://git.generalassemb.ly/user-attachments/assets/88fb764f-1991-404a-8163-d941cf83ed01" />
 
-**Risk profile:** Generally low. These tools read data; they do not modify it. The primary risks are data exposure (retrieved content may be sensitive) and hallucination masking (an agent that retrieves incorrect data may present it confidently as fact).
+**Think of it like:** giving the agent a library card and internet access. It can read anything it has been given access to — but it cannot change anything yet.
 
-**Configuration principle:** Where possible, provide read-only credentials. An agent that only needs to read from a database should never be given write access.
+**Risk level: Low.** These tools only read — they do not modify anything. The main risk is if the agent reads incorrect information and presents it as fact.
+
+**Key rule:** Only give the agent access to the information it actually needs. If it only needs to read sales data, don't give it access to HR records.
+
 
 ---
 
@@ -64,10 +67,11 @@ These tools give the agent the ability to perform calculations, transformations,
 
 <img width="692" height="179" alt="image" src="https://git.generalassemb.ly/user-attachments/assets/4feea3bb-fe65-4b82-ba12-17d5f8776418" />
 
+**Think of it like:** giving the agent a calculator and a spreadsheet. It can do the maths and update the data — but any changes it makes to a shared document are real and immediate.
 
-**Risk profile:** Medium. Code execution introduces the risk of unintended side effects if the sandbox is not properly isolated. Spreadsheet write access can overwrite or corrupt business data.
+**Risk level: Medium.** If the agent writes incorrect data to a shared spreadsheet, it affects everyone who uses it.
 
-**Configuration principle:** Code interpreters must run in isolated sandboxes with no access to the host filesystem or network unless explicitly required. Write access to production data should require an additional confirmation step.
+**Key rule:** Start with read-only access. Add write access only after you have verified the agent is working correctly in tests.
 
 ---
 
@@ -77,10 +81,11 @@ These tools allow the agent to send messages, notifications, and alerts — maki
 
 <img width="692" height="124" alt="image" src="https://git.generalassemb.ly/user-attachments/assets/13addfa0-674f-41d6-b3ac-612612974c0a" />
 
+**Think of it like:** giving the agent access to your inbox and messaging apps. Once it sends something, you cannot unsend it.
 
-**Risk profile:** High. Communication tools have direct external impact. An agent that sends emails or messages autonomously can cause reputational, legal, or operational harm if it acts incorrectly. The effects are often irreversible — a sent email cannot be unsent.
+**Risk level: High.** A message sent to the wrong person, with the wrong content, or at the wrong time can damage trust, create legal issues, or violate privacy — and the effect is usually irreversible.
 
-**Configuration principle:** Communication tools should default to a draft-and-review pattern unless the message type is templated, low-risk, and the recipient population is well-defined. Mass communications (to mailing lists, multiple Slack channels, or bulk SMS) should always require human approval.
+**Key rule:** For anything going to external contacts or large groups, the agent should prepare a draft for a human to review before sending. Only automate sending for templated, low-risk messages to a well-defined audience.
 
 ---
 
@@ -91,9 +96,11 @@ These tools enable the agent to modify state in external systems — creating re
 <img width="688" height="212" alt="image" src="https://git.generalassemb.ly/user-attachments/assets/1efdc534-6773-43ca-9c76-1326389bbefa" />
 
 
-**Risk profile:** Very high. Write operations are often irreversible or difficult to undo. A financial transaction processed in error may require manual reconciliation. A provisioning action that grants excessive permissions creates a security vulnerability. A CRM record updated with incorrect data can propagate errors through downstream systems.
+**Think of it like:** giving the agent the ability to update your company's systems directly. Every change is real, immediate, and affects other people and processes.
 
-**Configuration principle:** Write tools must have clearly defined scope (which records, which fields, which value ranges), reversibility assessment (can this be undone?), and approval thresholds (above what value or impact does this require human sign-off?).
+**Risk level: Very high.** A wrong update to a customer record, an accidental refund, or a mistaken deletion can have serious business consequences — and may be impossible to undo.
+
+**Key rule:** Before giving an agent this kind of access, answer three questions: What exactly is it allowed to change? Up to what value or impact can it act alone? What must a human approve first?
 
 ---
 
@@ -104,9 +111,10 @@ These tools are often overlooked in tool taxonomies but are architecturally esse
 <img width="694" height="164" alt="image" src="https://git.generalassemb.ly/user-attachments/assets/ed49b7c6-e2f5-4053-9c4a-ce0ed14478ce" />
 
 
-**Risk profile:** Low — these tools reduce autonomous action, they do not increase it. The risk of not having them is far greater than the risk of having them.
+**Think of it like:** a well-trained employee who knows when to stop and ask their manager. This is not a limitation — it is what makes the system safe and trustworthy.
 
-**Configuration principle:** Every agent should have at least one escalation path. An agent with no mechanism to involve a human is an agent with no fallback when it fails.
+**Risk level: Low.** These tools reduce the chance of mistakes. Every agent must have at least one escalation path.
+
 
 ---
 
@@ -118,229 +126,113 @@ Summarizing the five categories by risk and reversibility:
 
 ---
 
-## 2. Connecting and Configuring Tools Safely (15 min)
+## 2. Connecting and Configuring Tools Safely (20 min)
 
-### From Concept to Connection: What Tool Configuration Actually Involves
+### What "Connecting a Tool" Actually Means
 
-When a platform documentation says "connect your agent to Google Sheets," what does that actually mean architecturally? Understanding the underlying components of a tool connection prevents misconfiguration and security gaps.
+When you connect an agent to a tool in a platform like Flowise, GPT Builder, or Relevance AI, you are doing three things:
 
-A tool connection has four components:
-
-<img width="697" height="273" alt="image" src="https://git.generalassemb.ly/user-attachments/assets/4065695f-6411-4dbb-a420-68124c702253" />
-
-
-### Authentication Patterns
-
-The method of authentication determines the security boundary of the tool. There are three common patterns:
-
-#### API Key Authentication
-
-A static key is stored in the agent's configuration and passed in the request header. Simple and widely supported, but carries risk: if the key is exposed (through logs, error messages, or prompt injection), it grants full access to whoever has it.
-
-```
-Configuration:
-  TOOL: google_sheets
-  API_KEY: [stored in environment variable, never in the prompt]
-  SCOPE: read + write (spreadsheets only)
-```
-
-**Best practice:** Store API keys as environment variables, never in the system prompt or tool schema. Rotate keys on a defined schedule. Use the minimum permission scope the tool requires.
-
-#### OAuth 2.0
-
-The agent authenticates as a specific user or service account through a delegated authorization flow. More secure than API keys because tokens are scoped, short-lived, and can be revoked without changing the underlying credential.
-
-**Best practice:** Use service accounts with the minimum required permissions, not personal user accounts. Log which service account is being used for each tool call — this creates an auditable trail.
-
-#### Webhook Authentication
-
-The tool is triggered by an incoming HTTP request to a URL. The agent sends a request with a shared secret in the header; the receiving service validates the secret before executing the action.
-
-**Best practice:** Always validate webhook signatures. Never expose webhook URLs publicly without authentication — an unauthenticated webhook is an open door to uncontrolled execution.
-
-### Schema Definition: How the LLM Understands a Tool
-
-The tool schema is the structured description the LLM reads to understand what a tool does and how to call it. A well-written schema is the difference between an agent that uses tools correctly and one that calls them with wrong parameters, in the wrong order, or in the wrong situations.
-
-**Schema components:**
-
-```json
-{
-  "name": "update_order_status",
-  "description": "Updates the status of a customer order in the order management system. 
-                  Use this only after verifying the customer's identity and confirming 
-                  the new status is valid. Do not use to cancel orders — use 
-                  cancel_order instead.",
-  "parameters": {
-    "order_id": {
-      "type": "string",
-      "description": "The unique order identifier, format: ORD-XXXXXX"
-    },
-    "new_status": {
-      "type": "string",
-      "enum": ["processing", "shipped", "delivered", "on_hold"],
-      "description": "The new status to assign. Cannot set to 'cancelled' via this tool."
-    },
-    "reason": {
-      "type": "string",
-      "description": "Brief explanation for the status change, for audit logging."
-    }
-  },
-  "required": ["order_id", "new_status", "reason"]
-}
-```
-
-**Schema writing principles:**
-
-- **Name:** Use a verb-noun format that describes what the tool does, not what it is (`update_order_status`, not `order_management`)
-- **Description:** Include when to use it AND when not to use it — the LLM makes better tool selection decisions with negative guidance
-- **Parameters:** Use enums to constrain valid values wherever possible; free-text parameters introduce unpredictability
-- **Required fields:** Mark every field the tool cannot function without as required — this prevents silent failures from missing parameters
-
-### Scope Restriction: The Principle of Least Privilege
-
-The principle of least privilege states that any system — including an agent — should have access only to the resources and capabilities it needs to perform its defined function, and nothing more.
-
-In practice, this means:
-
-| Instead of... | Configure... |
-|---|---|
-| Full CRM read/write access | Read access to customer records; write access to interaction logs only |
-| Full Gmail access | Send-only access, restricted to approved recipient domains |
-| Full database access | Read-only access to the specific tables the agent needs |
-| Admin-level API credentials | A service account with the minimum permission set |
-
-Scope restriction is not about distrust — it is about containing the blast radius when something goes wrong. An agent with minimal permissions that behaves unexpectedly causes minimal damage. An agent with admin permissions that behaves unexpectedly can be catastrophic.
-
-### Error Handling: What Happens When a Tool Fails
-
-Tool failures are not edge cases — they are routine occurrences in production systems. APIs rate-limit, networks time out, external services have downtime, and parameters that passed validation in testing fail against live data. An agent that has no defined behavior for tool failures will either loop indefinitely, hallucinate a result, or crash.
-
-Every tool integration should define responses for three failure modes:
-
-**1. Transient failure (temporary unavailability):**
-```
-Policy: Retry once after 5 seconds. 
-If retry fails: inform the customer of a temporary delay, 
-log the failure, and offer to follow up via email.
-```
-
-**2. Data error (tool returns unexpected format or empty result):**
-```
-Policy: Do not assume. 
-If order_lookup returns null: do not tell the customer the order doesn't exist — 
-ask them to verify the order number and try once more. 
-If the second attempt fails: escalate.
-```
-
-**3. Authorization error (tool returns 401 or 403):**
-```
-Policy: Do not retry. 
-Log the authentication failure as a security event. 
-Inform the customer that you are unable to access this information currently 
-and escalate to a human agent.
-```
+1. **Telling the agent what the tool does** — so it knows when to use it
+2. **Giving the agent permission to access it** — through a connection or login
+3. **Setting the rules for how it can be used** — what it can and cannot do
 
 ---
 
-## 3. Human-in-the-Loop: When Agents Should Not Act Alone (15 min)
+### Step 1: Telling the Agent What the Tool Does
+
+In no-code platforms, every tool has a name and a description. The agent reads this description to decide whether to use the tool in a given situation.
+
+A good description answers two questions: *what does it do?* and *when should I use it?* It is also useful to say when it should NOT be used.
+
+**Weak description — agent may misuse the tool:**
+> "Google Sheets tool"
+
+**Strong description — agent knows exactly when and how to use it:**
+> "Use this tool to read the current list of open sales leads from the Sales Pipeline spreadsheet. Use it when the user asks about lead status or pipeline updates. Do not use it to write or update any data."
+
+The description is not just documentation — it is an instruction the agent follows every time it decides whether to use the tool. Vague descriptions produce unpredictable behavior.
+
+---
+
+### Step 2: Giving the Agent Permission
+
+Every tool connection requires some form of permission. In no-code platforms, this usually works in one of three ways:
+
+**Connect your account (most common):** Click "Connect" and log in with your Google, Slack, or Zapier account. The platform stores a secure access permission on your behalf. You see this in Flowise, Relevance AI, and GPT Builder.
+
+**Enter an API key:** Some tools require you to generate a key in the tool's settings and paste it into the platform. The key acts like a password that lets the agent access the tool.
+
+**Use a pre-built connector:** Platforms like Zapier and Make have hundreds of pre-built app connections. You choose the app, log in, and the connector handles the rest.
+
+**The safety rule that applies to all three:** Only grant the minimum level of access the agent needs. If it needs to read emails but not send them, configure it as read-only. If it needs one specific spreadsheet, don't give it access to your entire Google Drive.
+
+---
+
+### Step 3: Restricting Scope and Handling Failures
+
+Once connected, restrict what the tool can actually do:
+
+| Tool | Risky default | Safer configuration |
+|---|---|---|
+| Google Sheets | Access to all sheets in your Drive | One named spreadsheet only |
+| Gmail / Outlook | Full send access | Draft-only, or approved contacts only |
+| Slack | Post to any channel | One designated channel only |
+| Zapier | Trigger any workflow | One specific, tested workflow only |
+| CRM (HubSpot, Salesforce) | Read and write all records | Read-only, or write to one specific field |
+
+**What happens when a tool fails?**
+
+Tools break — connections time out, apps go down, data comes back in an unexpected format. Define what the agent should do before this happens:
+
+- **Retry once, then stop** — for minor connection glitches
+- **Tell the user and continue without the tool** — if the tool is optional for the task
+- **Stop and escalate to a human** — for critical tools like payment processing or CRM updates
+
+Define these fallback behaviors in the agent's instructions before going live — not after the first failure.
+
+---
+
+## 3. Human-in-the-Loop: When Agents Should Not Act Alone (10 min)
 
 ### The Autonomy Decision Is Not Binary
 
-A common framing error is treating human-in-the-loop as an on/off switch: either the agent is autonomous, or a human does the work. In practice, the human-in-the-loop question is more nuanced: **for which specific actions, above which thresholds, in which contexts, does this agent need human authorization before proceeding?**
+A common assumption is that the goal of an AI agent is to remove humans from the process entirely. This is the wrong goal. The right question is not "how do we eliminate the human?" — it is "at which specific moments does a human need to be involved?"
 
-The answer is different for every tool, every organization, and every risk environment. The goal of this segment is to provide a framework for making that determination deliberately, rather than by default or omission.
+### Four Triggers That Always Require a Human
 
-### Four Triggers for Human-in-the-Loop Intervention
+**Trigger 1: High-impact actions**
+Define a clear limit above which the agent must pause and ask for approval:
 
-#### Trigger 1: Impact Threshold
-
-Define a quantitative boundary above which autonomous action is not permitted, regardless of the agent's confidence.
-
-| Tool | Autonomous Threshold | Requires Approval Above |
+| Action | Agent handles alone | Needs human approval |
 |---|---|---|
-| Refund processor | Up to $200 | $200 |
-| Purchase order | Up to $1,000 | $1,000 |
-| Email send | Single recipient, templated content | Multiple recipients or custom content |
-| Account permission change | Read access grants | Write or admin access grants |
-| Data deletion | Soft delete (recoverable) | Hard delete (permanent) |
+| Processing a refund | Up to $200 | Over $200 |
+| Sending an email | One recipient, templated content | Multiple recipients or custom content |
+| Updating a record | Standard fields | Sensitive fields (payment, account tier) |
+| Triggering a workflow | Internal, reversible | External or irreversible |
 
-Thresholds should be set by the business stakeholder responsible for the process — not by the AI team. The AI team can implement the threshold; the business owner must define it.
+These limits are business decisions, not technical ones. The team responsible for the process defines the threshold — the platform enforces it.
 
-#### Trigger 2: Irreversibility
+**Trigger 2: Actions that cannot be undone**
+Sending a mass email. Deleting a record permanently. Processing a settled payment. Ask: *"If this turns out to be wrong, how hard is it to fix?"* If the answer is "very hard" or "impossible," a human must approve before the agent acts.
 
-Any action that cannot be undone or is difficult to reverse should require human confirmation before execution.
+**Trigger 3: Situations where the agent is not sure**
+If a request is ambiguous, if two valid interpretations lead to very different actions, or if something doesn't add up — the agent should stop and ask rather than guess. An agent that guesses in ambiguous situations will eventually guess wrong.
 
-**Irreversible or hard-to-reverse actions:**
-- Sending external communications (emails, SMS, notifications)
-- Permanent data deletion
-- Financial transactions (once settled)
-- Account terminations
-- Provisioning actions (especially permission grants)
+**Trigger 4: Sensitive situations**
+A customer who is distressed. A complaint involving a legal issue. A request touching on health or safety. These situations require human empathy and judgment — not automation.
 
-**A useful test:** "If this action turns out to be wrong, how much effort is required to undo it?" Actions where the answer is "significant effort" or "impossible" should have human approval gates.
+### The Three Ways to Involve a Human
 
-#### Trigger 3: Confidence and Ambiguity
+**Draft and Review:** Agent prepares everything; human approves before anything is sent or changed.
+> Agent drafts a complaint response → human reviews → human clicks Send.
 
-Even within its defined scope, an agent should escalate when it is not confident that it has understood the situation correctly.
+**Approval Gate:** Agent pauses at a specific step, notifies a human, and waits for the green light before continuing.
+> Agent flags a refund over the limit → sends approval request to manager → processes only after approval is received.
 
-This is particularly important when:
-- The user's intent is ambiguous and clarification has not resolved it
-- Multiple valid interpretations of a request lead to significantly different actions
-- The retrieved data contradicts the user's stated information
-- The situation falls at the boundary of a defined constraint (e.g., a refund request that is 1 day outside the policy window)
+**Full Escalation:** Agent hands the entire interaction to a human, with a full summary of everything that has happened so far.
+> Agent cannot resolve the issue → creates a case summary → routes to a human agent with full context ready.
 
-The agent should be explicitly instructed — in the system prompt — to escalate in these cases rather than guess.
-
-#### Trigger 4: Sensitive Context
-
-Some situations warrant human involvement regardless of the action's technical scope or financial value.
-
-**Examples:**
-- A customer expresses significant distress or frustration
-- A request involves a potential legal claim or regulatory issue
-- A user's account shows signs of suspicious activity
-- The request involves a protected characteristic (medical, legal, financial advice in regulated contexts)
-
-These are not situations where an agent's technical capability is the limiting factor — they are situations where human judgment, empathy, and accountability are required.
-
-### Designing the Escalation Path
-
-Every agent needs at least one escalation path. The escalation path answers three questions:
-
-**1. When does escalation trigger?**  
-Define the conditions explicitly in the system prompt and in the tool configuration. Vague conditions ("when appropriate") produce inconsistent escalation behavior.
-
-**2. What information is passed to the human?**  
-The handoff must include everything the human needs to continue without starting over: the customer's identity, the issue summary, the actions already taken, the agent's recommended next step, and the reason for escalation.
-
-**3. What does the customer experience during escalation?**  
-The agent should inform the customer that escalation is happening, set an expectation for response time, and — where possible — provide a reference number. A customer who is escalated without explanation experiences the escalation as abandonment.
-
-### The Approval Gate Pattern
-
-For high-impact actions that do not require full escalation — the agent can proceed, but only after a human confirms — the approval gate pattern provides a middle path between full autonomy and full escalation.
-
-```
-AGENT:  "I'm ready to process a refund of $380 to Maria Silva's original 
-         payment method for order #48291. This exceeds the standard refund 
-         limit. Sending approval request to the operations team now."
-
-→ approval_request tool called
-→ Operations team member receives: amount, customer, order, agent's reasoning
-→ Operations team member approves or rejects via approval interface
-→ Agent receives response and proceeds or escalates accordingly
-```
-
-The approval gate preserves the efficiency benefit of agent automation for the majority of the workflow, while maintaining human control at the highest-risk decision point.
-
-### Human-in-the-Loop Is Not a Failure
-
-A persistent misconception in AI deployment is that human-in-the-loop requirements represent a failure of the AI to be "fully autonomous." This framing is wrong and dangerous.
-
-Human-in-the-loop is a **design choice that reflects appropriate risk calibration**. An agent that acts autonomously in situations where it should not is not more capable — it is more dangerous. The organizations that deploy agents most successfully are those that design human checkpoints deliberately and treat them as permanent features of the system, not temporary scaffolding to be removed when the agent "matures."
-
-Autonomy should be earned through demonstrated reliability at lower levels of scope, not assumed from the outset.
+**A persistent misconception:** human-in-the-loop is not a failure of the AI to be "smart enough." It is a deliberate design choice that reflects appropriate risk management. The organizations that deploy agents most successfully are those that design human checkpoints intentionally — and treat them as permanent features, not temporary training wheels.
 
 ---
 
