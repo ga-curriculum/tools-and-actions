@@ -74,10 +74,10 @@ By the end of this module, learners should be able to:
 
 ---
 
-# 1. The Tool Landscape: Categories and Capabilities  
+## 1. The Tool Landscape: Categories and Capabilities  
 **Time:** ~20 minutes  
 
-## Purpose
+### Purpose
 
 Help learners understand:
 
@@ -90,7 +90,7 @@ Frame this clearly before diving into categories.
 
 ---
 
-## Teaching Strategy
+### Teaching Strategy
 
 For each category:
 
@@ -103,7 +103,7 @@ Have learners answer verbally before revealing the “risk level.”
 
 ---
 
-## Category 1: Search and Information Retrieval  
+### Category 1: Search and Information Retrieval  
 **Risk Level: Low**
 
 Examples:
@@ -131,7 +131,7 @@ Ask:
 
 ---
 
-## Category 2: Data Processing and Calculation  
+### Category 2: Data Processing and Calculation  
 **Risk Level: Medium**
 
 Examples:
@@ -158,7 +158,7 @@ Ask:
 
 ---
 
-## Category 3: Communication and Notification  
+### Category 3: Communication and Notification  
 **Risk Level: High**
 
 Examples:
