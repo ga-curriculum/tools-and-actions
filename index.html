@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tool Integration Challenge — General Assembly BAA 7.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --black:#0d0d0d;--black2:#1a1a1a;--black3:#252525;--black4:#333;
+  --line:#2e2e2e;--line2:#404040;--gray-dk:#555;--gray:#888;
+  --gray-lt:#bbb;--white:#fff;
+  --GA-red:#e8333a;--GA-red2:#ff4a50;
+  --yellow:#f5c518;--green:#22c55e;--blue:#3b82f6;--purple:#a855f7;--teal:#14b8a6;--orange:#f97316;
+  --r:4px;--r-lg:10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Barlow',sans-serif;background:var(--black);color:var(--white);font-size:16px;line-height:1.6;min-height:100vh}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--black2)}
+::-webkit-scrollbar-thumb{background:var(--black4);border-radius:3px}
+header{position:sticky;top:0;z-index:500;background:var(--black);border-bottom:2px solid var(--GA-red);display:flex;align-items:stretch;height:58px}
+.ga-logo{display:flex;align-items:center;gap:10px;padding:0 20px;border-right:1px solid var(--line);flex-shrink:0;cursor:pointer}
+.ga-mark{width:32px;height:32px;background:var(--GA-red);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;letter-spacing:.05em;color:#fff;border-radius:2px;flex-shrink:0}
+.ga-name{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--gray-lt);text-transform:uppercase;line-height:1.2}
+.ga-name span{display:block;font-size:10px;color:var(--gray);font-weight:600}
+.tab-bar{display:flex;align-items:stretch;overflow-x:auto;flex:1;scrollbar-width:none}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab{display:flex;align-items:center;gap:6px;padding:0 16px;font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;color:var(--gray);letter-spacing:.02em;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:color .15s,border-color .15s;position:relative;top:2px}
+.tab:hover{color:var(--white)}
+.tab.active{color:var(--white);border-bottom-color:var(--GA-red)}
+.hd-end{display:flex;align-items:center;padding:0 18px;border-left:1px solid var(--line);flex-shrink:0}
+.prog-chip{background:var(--GA-red);color:#fff;font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 12px;border-radius:20px;white-space:nowrap}
+.section{display:none}.section.active{display:block}
+.wrap{max-width:860px;margin:0 auto;padding:48px 24px 80px}
+.eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--GA-red);margin-bottom:10px;display:block}
+h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(2.4rem,6vw,3.8rem);font-weight:900;line-height:1.05;letter-spacing:-.01em;color:#fff;margin-bottom:16px}
+h1 .red{color:var(--GA-red)}
+h2{font-family:'Barlow Condensed',sans-serif;font-size:clamp(1.7rem,4vw,2.4rem);font-weight:800;letter-spacing:-.01em;line-height:1.1;color:#fff;margin-bottom:8px}
+h2 .red{color:var(--GA-red)}
+h3{font-size:1rem;font-weight:700;color:#fff;margin-bottom:6px}
+.lead{font-size:1.05rem;color:var(--gray-lt);line-height:1.7;margin-bottom:28px;max-width:640px}
+.hr{height:1px;background:var(--line);margin:36px 0}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:var(--r);font-family:'Barlow',sans-serif;font-size:.95rem;font-weight:700;cursor:pointer;border:2px solid transparent;transition:all .15s;letter-spacing:.01em;white-space:nowrap;text-decoration:none}
+.btn-red{background:var(--GA-red);color:#fff;border-color:var(--GA-red)}
+.btn-red:hover{background:var(--GA-red2);border-color:var(--GA-red2);transform:translateY(-1px)}
+.btn-green{background:var(--green);color:var(--black);border-color:var(--green)}
+.btn-green:hover{background:#16a34a;border-color:#16a34a;transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--gray-lt);border:2px solid var(--line2);padding:10px 20px;font-size:.88rem;font-weight:600;cursor:pointer;border-radius:var(--r);transition:all .15s;text-decoration:none}
+.btn-ghost:hover{border-color:var(--gray);color:#fff}
+.btn-outline{background:transparent;color:var(--blue);border:1.5px solid var(--blue);padding:7px 16px;border-radius:var(--r);font-size:.82rem;font-weight:700;cursor:pointer;transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn-outline:hover{background:rgba(59,130,246,.1)}
+.card{background:var(--black2);border:1px solid var(--line);border-radius:var(--r-lg);padding:28px;margin-bottom:16px}
+.card-rb{border-top:3px solid var(--GA-red)}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.b-green{background:rgba(34,197,94,.18);color:var(--green)}
+.b-red{background:rgba(232,51,58,.18);color:var(--GA-red)}
+.b-yellow{background:rgba(245,197,24,.18);color:var(--yellow)}
+.b-blue{background:rgba(59,130,246,.18);color:var(--blue)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.a1{animation:fadeUp .35s ease both}
+.a2{animation:fadeUp .35s .1s ease both}
+.a3{animation:fadeUp .35s .2s ease both}
+/* HERO */
+.hero-kicker{display:inline-flex;align-items:center;gap:8px;background:var(--black3);border:1px solid var(--line);border-radius:var(--r);padding:6px 14px;margin-bottom:20px;font-size:12px;font-weight:600;color:var(--gray-lt);letter-spacing:.04em}
+.hero-kicker .dot{width:8px;height:8px;background:var(--GA-red);border-radius:50%;flex-shrink:0}
+.obj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:32px}
+.obj-card{background:var(--black2);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px;display:flex;gap:14px;align-items:flex-start}
+.obj-num{font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;color:var(--GA-red);line-height:1;flex-shrink:0}
+.obj-body{font-size:.9rem;color:var(--gray-lt);line-height:1.55;padding-top:4px}
+.roadmap{display:flex;flex-direction:column}
+.rm-item{display:flex;align-items:flex-start;gap:16px;padding:14px 0;border-bottom:1px solid var(--line)}
+.rm-item:last-child{border-bottom:none}
+.rm-dot{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;border:2px solid var(--line);background:var(--black3);color:var(--gray);transition:all .25s}
+.rm-dot.done{background:var(--green);border-color:var(--green);color:var(--black)}
+.rm-dot.active{background:var(--GA-red);border-color:var(--GA-red);color:#fff}
+.rm-label{font-size:.95rem;font-weight:600;color:var(--gray);transition:color .2s;padding-top:6px}
+.rm-label.active{color:#fff}
+.rm-label.done{color:var(--green);text-decoration:line-through}
+.rm-sub{font-size:.8rem;color:var(--gray-dk);margin-top:2px}
+/* PLATFORM PICKER */
+.pick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-bottom:24px}
+.pick-card{background:var(--black2);border:2px solid var(--line);border-radius:var(--r-lg);padding:22px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.pick-card:hover{border-color:var(--line2);transform:translateY(-2px)}
+.pick-card.selected{border-color:var(--GA-red);background:rgba(232,51,58,.05)}
+.pick-card.selected::after{content:'✓';position:absolute;top:12px;right:14px;width:22px;height:22px;background:var(--GA-red);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff;line-height:22px;text-align:center}
+.pick-icon{font-size:2rem;margin-bottom:10px}
+.pick-name{font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:800;letter-spacing:.02em;color:#fff;margin-bottom:4px}
+.pick-sub{font-size:.82rem;color:var(--gray);line-height:1.5}
+.pick-tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-top:8px}
+/* STEP CARDS */
+.step-list{display:flex;flex-direction:column;gap:0}
+.step-card{border-left:3px solid var(--line);padding:0 0 28px 24px;position:relative;margin-left:16px}
+.step-card:last-child{padding-bottom:0;border-left-color:transparent}
+.step-num{position:absolute;left:-20px;top:0;width:36px;height:36px;border-radius:50%;background:var(--black3);border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:.85rem;font-weight:800;color:var(--gray);transition:all .2s}
+.step-card.complete .step-num{background:var(--green);border-color:var(--green);color:var(--black)}
+.step-card.active .step-num{background:var(--GA-red);border-color:var(--GA-red);color:#fff}
+.step-card.active{border-left-color:var(--GA-red)}
+.step-card.complete{border-left-color:var(--green)}
+.step-head{padding-top:4px;margin-bottom:12px}
+.step-title{font-family:'Barlow Condensed',sans-serif;font-size:1.15rem;font-weight:800;letter-spacing:.01em;color:#fff;margin-bottom:2px}
+.step-body{font-size:.92rem;color:var(--gray-lt);line-height:1.75}
+.step-body strong{color:#fff}
+.step-body code{font-family:'JetBrains Mono',monospace;font-size:.82rem;background:var(--black3);padding:2px 7px;border-radius:3px;color:var(--yellow)}
+.callout{border-radius:var(--r-lg);padding:14px 16px;margin-top:12px;font-size:.88rem;line-height:1.65}
+.callout-tip{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);color:#93c5fd}
+.callout-warn{background:rgba(245,197,24,.08);border:1px solid rgba(245,197,24,.2);color:#fde68a}
+.callout-error{background:rgba(232,51,58,.08);border:1px solid rgba(232,51,58,.2);color:#fca5a5}
+.callout-success{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);color:#86efac}
+.callout strong{color:#fff}
+.doc-link{display:inline-flex;align-items:center;gap:6px;color:var(--blue);font-size:.82rem;font-weight:600;text-decoration:none;border:1px solid rgba(59,130,246,.3);padding:5px 12px;border-radius:20px;transition:all .15s;margin-top:8px;margin-right:6px}
+.doc-link:hover{background:rgba(59,130,246,.1);border-color:var(--blue)}
+.step-mark-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:var(--r);background:transparent;border:1.5px solid var(--line2);color:var(--gray);font-size:.84rem;font-weight:700;cursor:pointer;transition:all .15s;margin-top:14px}
+.step-mark-btn:hover{border-color:var(--green);color:var(--green)}
+.step-mark-btn.done{background:rgba(34,197,94,.1);border-color:var(--green);color:var(--green);cursor:default}
+/* CODE BLOCK */
+.code-block{background:var(--black3);border:1px solid var(--line);border-radius:var(--r-lg);padding:16px 18px;margin-top:12px;position:relative}
+.code-block pre{font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--gray-lt);white-space:pre;overflow-x:auto;line-height:1.7}
+.code-block pre .key{color:var(--blue)}
+.code-block pre .str{color:var(--green)}
+.code-block pre .num{color:var(--yellow)}
+.code-block pre .comment{color:var(--gray-dk)}
+.copy-btn{position:absolute;top:10px;right:10px;padding:4px 10px;background:var(--black4);border:1px solid var(--line2);border-radius:3px;font-size:.72rem;font-weight:700;color:var(--gray);cursor:pointer;transition:all .15s}
+.copy-btn:hover{color:#fff;border-color:var(--gray)}
+/* VERIFICATION CHECKLIST */
+.verify-item{display:flex;align-items:flex-start;gap:14px;padding:16px 0;border-bottom:1px solid var(--line)}
+.verify-item:last-child{border-bottom:none}
+.verify-check{width:28px;height:28px;border-radius:6px;border:2px solid var(--line2);background:var(--black3);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.85rem;transition:all .2s;margin-top:2px}
+.verify-check:hover{border-color:var(--green)}
+.verify-check.checked{background:var(--green);border-color:var(--green)}
+.verify-label{flex:1}
+.verify-label strong{display:block;font-size:.95rem;font-weight:700;color:#fff;margin-bottom:3px}
+.verify-label span{font-size:.85rem;color:var(--gray-lt);line-height:1.55}
+.verify-label .expected{display:block;font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--yellow);background:var(--black3);padding:4px 8px;border-radius:3px;margin-top:6px}
+/* MISSION BADGE */
+.mission-badge{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(232,51,58,.15),rgba(168,85,247,.15));border:1px solid rgba(232,51,58,.3);border-radius:var(--r-lg);padding:16px 20px;margin-bottom:24px;width:100%}
+.mission-icon{font-size:2rem;flex-shrink:0}
+.mission-text strong{display:block;font-size:1rem;font-weight:700;color:#fff;margin-bottom:2px}
+.mission-text span{font-size:.88rem;color:var(--gray-lt);line-height:1.55}
+/* QUIZ */
+.qz-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.qz-meta span{font-size:.85rem;color:var(--gray);font-weight:500}
+.prog-bar{height:4px;background:var(--black3);border-radius:2px;margin-bottom:28px;overflow:hidden}
+.prog-fill{height:100%;background:var(--GA-red);border-radius:2px;transition:width .4s ease}
+.quiz-q{font-family:'Barlow Condensed',sans-serif;font-size:1.45rem;font-weight:700;line-height:1.3;color:#fff;margin-bottom:20px;letter-spacing:-.01em}
+.q-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.q-opt{background:var(--black2);border:2px solid var(--line);border-radius:var(--r-lg);padding:14px 18px;cursor:pointer;display:flex;align-items:flex-start;gap:14px;font-size:.95rem;color:var(--gray-lt);transition:all .16s;text-align:left;width:100%}
+.q-opt:hover:not(.disabled){border-color:var(--GA-red);color:#fff;background:rgba(232,51,58,.05)}
+.q-opt.correct{border-color:var(--green);background:rgba(34,197,94,.07);color:#fff}
+.q-opt.wrong{border-color:var(--GA-red);background:rgba(232,51,58,.08);color:#fff}
+.q-opt.disabled{cursor:default}
+.opt-k{width:30px;height:30px;border-radius:6px;flex-shrink:0;background:var(--black3);border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:700;color:var(--gray);transition:all .16s}
+.q-opt.correct .opt-k{background:var(--green);border-color:var(--green);color:var(--black)}
+.q-opt.wrong .opt-k{background:var(--GA-red);border-color:var(--GA-red);color:#fff}
+.q-opt:hover:not(.disabled) .opt-k{border-color:var(--GA-red);color:var(--GA-red)}
+.fb-box{display:none;border-radius:var(--r-lg);padding:14px 18px;font-size:.92rem;line-height:1.6;margin-bottom:14px}
+.fb-box.show{display:flex;gap:10px;align-items:flex-start}
+.fb-box.ok{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:#86efac}
+.fb-box.bad{background:rgba(232,51,58,.1);border:1px solid rgba(232,51,58,.3);color:#fca5a5}
+.fb-icon{font-size:1.1rem;flex-shrink:0}
+.qz-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+/* RESULTS */
+.results-ring{position:relative;width:120px;height:120px;flex-shrink:0}
+.results-ring-txt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-pct{font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;color:#fff;line-height:1}
+.ring-sub{font-size:.7rem;color:var(--gray);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
+.score-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.score-row:last-child{border-bottom:none}
+.score-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.score-bar-wrap{width:80px;height:3px;background:var(--black3);border-radius:2px;flex-shrink:0}
+.score-bar-fill{height:100%;border-radius:2px}
+.tk-item{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.tk-item:last-child{border-bottom:none}
+.tk-num{font-family:'Barlow Condensed',sans-serif;font-size:1.6rem;font-weight:900;color:var(--GA-red);flex-shrink:0;line-height:1;padding-top:2px}
+.tk-txt{font-size:.92rem;color:var(--gray-lt);line-height:1.65}
+/* SUCCESS ANIM */
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.success-burst{animation:pulse .6s ease 2}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="ga-logo" onclick="nav('intro')">
+    <div class="ga-mark">GA</div>
+    <div class="ga-name">General Assembly<span>Build AI Agents · BAA 7.0</span></div>
+  </div>
+  <div class="tab-bar">
+    <div class="tab active" onclick="nav('intro')"    id="t-intro">⬡ Overview</div>
+    <div class="tab"        onclick="nav('choose')"   id="t-choose">◈ Choose Path</div>
+    <div class="tab"        onclick="nav('mission')"  id="t-mission">⚑ Mission</div>
+    <div class="tab"        onclick="nav('build')"    id="t-build">⚙ Build</div>
+    <div class="tab"        onclick="nav('test')"     id="t-test">▶ Test</div>
+    <div class="tab"        onclick="nav('verify')"   id="t-verify">✔ Verify</div>
+    <div class="tab"        onclick="nav('quiz')"     id="t-quiz">◇ Check</div>
+    <div class="tab"        onclick="nav('results')"  id="t-results">★ Results</div>
+  </div>
+  <div class="hd-end"><div class="prog-chip" id="progressChip">0 / 3</div></div>
+</header>
+
+<!-- ══════════════ INTRO ══════════════ -->
+<div class="section active" id="s-intro">
+  <div class="wrap">
+    <div class="a1" style="padding-bottom:40px;border-bottom:1px solid var(--line);margin-bottom:36px">
+      <div class="hero-kicker"><div class="dot"></div>Hands-On Lab &nbsp;·&nbsp; Module 7 &nbsp;·&nbsp; BAA 7.0</div>
+      <h1>Tool Integration<br/><span class="red">Challenge</span></h1>
+      <p class="lead">Agents without tools are just chatbots. In this lab you'll physically wire your agent to a real external tool — Google Sheets, Slack, or Airtable — inside a no-code platform, execute a live action, and verify the data moved.</p>
+      <button class="btn btn-red" onclick="nav('choose')">Choose Your Path →</button>
+    </div>
+    <span class="eyebrow">Learning Objectives</span>
+    <div class="obj-grid a2">
+      <div class="obj-card"><div class="obj-num">01</div><div class="obj-body">Select a no-code platform and explain the role each component plays in a tool-connected agent.</div></div>
+      <div class="obj-card"><div class="obj-num">02</div><div class="obj-body">Connect an external tool — Sheets, Slack, or Airtable — using authentication and configure one action.</div></div>
+      <div class="obj-card"><div class="obj-num">03</div><div class="obj-body">Execute a live test: retrieve or send data and confirm the action completed using observable proof.</div></div>
+      <div class="obj-card"><div class="obj-num">04</div><div class="obj-body">Diagnose what went wrong when a connection fails and apply the correct fix from the troubleshooting guide.</div></div>
+    </div>
+    <div class="hr"></div>
+    <span class="eyebrow">Your Lab Roadmap</span>
+    <div class="card a3">
+      <div class="roadmap">
+        <div class="rm-item"><div class="rm-dot active" id="dot-choose">1</div><div><div class="rm-label active" id="lbl-choose">Choose Your Path</div><div class="rm-sub">Pick your platform (GPTs Builder, Flowise, Relevance AI) and your tool (Google Sheets, Slack, or Airtable)</div></div></div>
+        <div class="rm-item"><div class="rm-dot" id="dot-mission">—</div><div><div class="rm-label" id="lbl-mission">Your Mission</div><div class="rm-sub">Read your specific mission brief — the exact action your agent must execute</div></div></div>
+        <div class="rm-item"><div class="rm-dot" id="dot-build">2</div><div><div class="rm-label" id="lbl-build">Build Your Connection</div><div class="rm-sub">Follow the step-by-step guide for your chosen platform + tool combo</div></div></div>
+        <div class="rm-item"><div class="rm-dot" id="dot-test">—</div><div><div class="rm-label" id="lbl-test">Run Your First Test</div><div class="rm-sub">Execute the action inside the platform and capture the result</div></div></div>
+        <div class="rm-item"><div class="rm-dot" id="dot-verify">3</div><div><div class="rm-label" id="lbl-verify">Verify Success</div><div class="rm-sub">Check off your proof-of-life checklist — 6 observable outcomes</div></div></div>
+        <div class="rm-item"><div class="rm-dot" id="dot-quiz">4</div><div><div class="rm-label" id="lbl-quiz">Knowledge Check</div><div class="rm-sub">7 questions · tool integration concepts · 70% to pass</div></div></div>
+        <div class="rm-item"><div class="rm-dot" id="dot-results">—</div><div><div class="rm-label" id="lbl-results">Results</div><div class="rm-sub">Mission debrief · score · key takeaways</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ CHOOSE ══════════════ -->
+<div class="section" id="s-choose">
+  <div class="wrap">
+    <span class="eyebrow">Step 01 · Choose Your Stack</span>
+    <h2>Pick Your <span class="red">Platform</span></h2>
+    <p class="lead">Every path leads to the same outcome — a live tool connection. Choose the platform you have access to, or pick the one you want to learn.</p>
+
+    <div style="margin-bottom:8px;font-size:.82rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray-dk)">Platform</div>
+    <div class="pick-grid" id="platformPicker">
+      <div class="pick-card" onclick="pickPlatform('gpts')">
+        <div class="pick-icon">🤖</div>
+        <div class="pick-name">GPTs Builder</div>
+        <div class="pick-sub">OpenAI's no-code agent builder. Uses Actions (OpenAPI schemas) to call external APIs. Free with ChatGPT Plus.</div>
+        <div class="pick-tag" style="background:rgba(34,197,94,.15);color:var(--green)">Easiest Start</div>
+      </div>
+      <div class="pick-card" onclick="pickPlatform('flowise')">
+        <div class="pick-icon">🌊</div>
+        <div class="pick-name">Flowise</div>
+        <div class="pick-sub">Open-source visual agent builder. Drag-and-drop nodes. Self-hostable or cloud. Native tool integrations built in.</div>
+        <div class="pick-tag" style="background:rgba(59,130,246,.15);color:var(--blue)">Most Flexible</div>
+      </div>
+      <div class="pick-card" onclick="pickPlatform('relevance')">
+        <div class="pick-icon">🧬</div>
+        <div class="pick-name">Relevance AI</div>
+        <div class="pick-sub">AI agent platform with a built-in tool library. Connects to 50+ apps without writing code. Free tier available.</div>
+        <div class="pick-tag" style="background:rgba(168,85,247,.15);color:var(--purple)">Best Tool Library</div>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+    <h2>Pick Your <span class="red">Tool</span></h2>
+    <p style="font-size:.95rem;color:var(--gray-lt);margin-bottom:20px">What external system will your agent connect to?</p>
+
+    <div class="pick-grid" id="toolPicker">
+      <div class="pick-card" onclick="pickTool('sheets')">
+        <div class="pick-icon">📊</div>
+        <div class="pick-name">Google Sheets</div>
+        <div class="pick-sub">Read rows, append data, look up values. The most common data integration for agent prototypes.</div>
+        <div class="pick-tag" style="background:rgba(34,197,94,.15);color:var(--green)">Retrieve + Write</div>
+      </div>
+      <div class="pick-card" onclick="pickTool('slack')">
+        <div class="pick-icon">💬</div>
+        <div class="pick-name">Slack</div>
+        <div class="pick-sub">Send messages to channels, post summaries, or trigger alerts. The most common delivery tool for agent output.</div>
+        <div class="pick-tag" style="background:rgba(245,197,24,.15);color:var(--yellow)">Send + Notify</div>
+      </div>
+      <div class="pick-card" onclick="pickTool('airtable')">
+        <div class="pick-icon">🗃️</div>
+        <div class="pick-name">Airtable</div>
+        <div class="pick-sub">Structured records, views, and bases. Read a record or create new entries. Combines spreadsheet UX with database power.</div>
+        <div class="pick-tag" style="background:rgba(249,115,22,.15);color:var(--orange)">Database Actions</div>
+      </div>
+    </div>
+
+    <div id="choiceConfirm" style="display:none;margin-top:24px">
+      <div style="background:rgba(232,51,58,.06);border:1px solid rgba(232,51,58,.25);border-radius:var(--r-lg);padding:18px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+        <div style="flex:1">
+          <div style="font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--GA-red);margin-bottom:4px">Your Stack</div>
+          <div id="stackSummary" style="font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:800;color:#fff"></div>
+        </div>
+        <button class="btn btn-red" onclick="confirmChoice()">Lock In My Path →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ MISSION ══════════════ -->
+<div class="section" id="s-mission">
+  <div class="wrap">
+    <span class="eyebrow">Your Mission Brief</span>
+    <h2 id="missionTitle">Mission: <span class="red">Loading…</span></h2>
+    <div id="missionContent"></div>
+    <div style="margin-top:24px">
+      <button class="btn btn-red" onclick="nav('build')">Accept Mission — Start Building →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ BUILD ══════════════ -->
+<div class="section" id="s-build">
+  <div class="wrap">
+    <span class="eyebrow">Step 02 · Build Your Connection</span>
+    <h2>Step-by-Step <span class="red">Build Guide</span></h2>
+    <div id="buildSummaryBar" style="margin-bottom:28px"></div>
+    <div class="step-list" id="buildSteps"></div>
+    <div style="margin-top:32px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-red" id="buildNextBtn" onclick="markDone('build');nav('test')" style="display:none">Steps Complete — Run Your Test →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ TEST ══════════════ -->
+<div class="section" id="s-test">
+  <div class="wrap">
+    <span class="eyebrow">Step 03 · Run Your First Test</span>
+    <h2>Execute the <span class="red">Action</span></h2>
+    <p class="lead">Your connection is configured. Now you trigger it. Follow these testing steps exactly — this is where most students find their first real bug.</p>
+
+    <div id="testContent"></div>
+
+    <div class="hr"></div>
+    <div class="callout callout-warn">
+      <strong>⚠️ Something didn't work?</strong> That's part of the lab. Check the Troubleshooting Guide below before asking for help — 90% of connection failures fall into one of five categories.
+    </div>
+    <div id="troubleshootContent" style="margin-top:20px"></div>
+
+    <div style="margin-top:28px">
+      <button class="btn btn-red" onclick="nav('verify')">Test Done — Verify Results →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ VERIFY ══════════════ -->
+<div class="section" id="s-verify">
+  <div class="wrap">
+    <span class="eyebrow">Step 04 · Proof of Life</span>
+    <h2>Verify Your <span class="red">Success</span></h2>
+    <p class="lead">Check every box that applies to your completed integration. You need at least 5 of 6 to mark this section complete — this is your evidence of a real, working connection.</p>
+
+    <div class="card" style="padding:8px 20px;margin-bottom:20px" id="verifyList"></div>
+
+    <div id="verifyProgress" style="margin-bottom:20px"></div>
+
+    <div class="callout callout-tip" style="margin-bottom:20px">
+      <strong>💡 Can't check all 6?</strong> Go back to the Build section and re-read the step that corresponds to the item you can't check off. Most missing checks are caused by a skipped authentication step or a missing field mapping.
+    </div>
+
+    <button class="btn btn-ghost" id="verifyNextBtn" onclick="markDone('verify');nav('quiz')" style="display:none">Go to Knowledge Check →</button>
+  </div>
+</div>
+
+<!-- ══════════════ QUIZ ══════════════ -->
+<div class="section" id="s-quiz">
+  <div class="wrap">
+    <span class="eyebrow">Section 05</span>
+    <h2>Knowledge <span class="red">Check</span></h2>
+    <p class="lead">Test your understanding of tool integration concepts. 70% or higher to pass.</p>
+    <div id="quizActive">
+      <div class="qz-meta"><span id="qMeta">Question 1 of 7</span><span id="qScoreTxt">Score: 0 / 0</span></div>
+      <div class="prog-bar"><div class="prog-fill" id="qProg" style="width:0%"></div></div>
+      <div class="card card-rb">
+        <div class="quiz-q" id="quizQ"></div>
+        <div class="q-opts" id="quizOpts"></div>
+        <div class="fb-box" id="quizFB"></div>
+        <div class="qz-foot">
+          <button class="btn btn-red" id="qNextBtn" onclick="nextQ()" style="display:none">Continue →</button>
+        </div>
+      </div>
+    </div>
+    <div id="quizDone" style="display:none">
+      <div class="card card-rb">
+        <h3 style="font-size:1.2rem;margin-bottom:8px">Quiz Complete <span id="qBadge"></span></h3>
+        <p style="font-size:.95rem;color:var(--gray-lt);line-height:1.7;margin-bottom:20px" id="qMsg"></p>
+        <button class="btn btn-green" onclick="markDone('quiz');buildResults();nav('results')">See Your Results →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ RESULTS ══════════════ -->
+<div class="section" id="s-results">
+  <div class="wrap">
+    <span class="eyebrow">Mission Debrief</span>
+    <h2>Lab <span class="red">Complete</span></h2>
+    <div id="resultsBody"></div>
+  </div>
+</div>
+
+<script>
+// ─── STATE ────────────────────────────────────────────────────────────────────
+const ALL_SECS=['intro','choose','mission','build','test','verify','quiz','results'];
+let completed=new Set(), sectionScores={};
+let chosenPlatform=null, chosenTool=null;
+let stepsCompleted=0, totalSteps=0;
+let verifyChecked=new Set();
+let quizStarted=false, qIdx=0, qScore=0, qAnswered=false;
+
+// ─── NAV ──────────────────────────────────────────────────────────────────────
+function nav(id){
+  ALL_SECS.forEach(s=>{
+    document.getElementById('s-'+s).classList.remove('active');
+    const t=document.getElementById('t-'+s);
+    if(t) t.classList.remove('active');
+  });
+  document.getElementById('s-'+id).classList.add('active');
+  const t=document.getElementById('t-'+id);
+  if(t) t.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='quiz'&&!quizStarted) initQuiz();
+}
+function markDone(key){
+  completed.add(key);
+  document.getElementById('progressChip').textContent=completed.size+' / 3';
+  const d=document.getElementById('dot-'+key);
+  const l=document.getElementById('lbl-'+key);
+  if(d){d.className='rm-dot done';d.textContent='✓';}
+  if(l){l.className='rm-label done';}
+}
+
+// ─── PICKERS ──────────────────────────────────────────────────────────────────
+const PLATFORM_NAMES={gpts:'GPTs Builder',flowise:'Flowise',relevance:'Relevance AI'};
+const TOOL_NAMES={sheets:'Google Sheets',slack:'Slack',airtable:'Airtable'};
+
+function pickPlatform(id){
+  chosenPlatform=id;
+  document.querySelectorAll('#platformPicker .pick-card').forEach((c,i)=>{
+    c.classList.toggle('selected',['gpts','flowise','relevance'][i]===id);
+  });
+  updateChoiceConfirm();
+}
+function pickTool(id){
+  chosenTool=id;
+  document.querySelectorAll('#toolPicker .pick-card').forEach((c,i)=>{
+    c.classList.toggle('selected',['sheets','slack','airtable'][i]===id);
+  });
+  updateChoiceConfirm();
+}
+function updateChoiceConfirm(){
+  const el=document.getElementById('choiceConfirm');
+  if(chosenPlatform&&chosenTool){
+    el.style.display='block';
+    document.getElementById('stackSummary').textContent=`${PLATFORM_NAMES[chosenPlatform]}  +  ${TOOL_NAMES[chosenTool]}`;
+  }
+}
+function confirmChoice(){
+  markDone('choose');
+  buildMission();
+  buildBuildGuide();
+  buildTestSection();
+  buildVerifySection();
+  nav('mission');
+}
+
+// ─── MISSION DATA ─────────────────────────────────────────────────────────────
+const MISSIONS={
+  gpts:{
+    sheets:{
+      title:'Read a Live CRM Row on Demand',
+      icon:'📊',
+      scenario:`You're an AI Product Owner at a telehealth startup. Every morning the clinical ops team checks a Google Sheet called "Patient Intake Queue" to see which patients submitted intake forms overnight. You're going to wire a GPT so that anyone on the team can type <strong>"Check intake queue"</strong> and get the latest row from the sheet — without opening Sheets at all.`,
+      action:'Retrieve the last row from a Google Sheet using GPT Actions and display it as a formatted message.',
+      deliverable:'A GPT that returns real data from your spreadsheet in response to a natural language prompt.',
+      prereqs:['ChatGPT Plus account (required for GPTs Builder)','A Google account with Google Sheets access','~25 minutes']
+    },
+    slack:{
+      title:'Post a Weekly Summary to Slack',
+      icon:'💬',
+      scenario:`You manage a customer success team. Every Friday your agent should post a short summary to the <strong>#cs-weekly</strong> Slack channel. You'll configure a GPT Action that sends a Slack message via the Slack Incoming Webhooks API — no Slack bot permissions needed, just a webhook URL.`,
+      action:'Send a formatted message to a Slack channel using a Slack Incoming Webhook configured as a GPT Action.',
+      deliverable:'A GPT that successfully posts a message to your Slack workspace.',
+      prereqs:['ChatGPT Plus account','A Slack workspace where you can create apps','~30 minutes']
+    },
+    airtable:{
+      title:'Look Up a Record by Name',
+      icon:'🗃️',
+      scenario:`Your support team tracks customer escalations in an Airtable base. You'll configure a GPT to call the Airtable REST API and look up a record by customer name — returning the status, assigned rep, and open issue count directly in the chat.`,
+      action:'Query an Airtable base via REST API using a GPT Action and display the matching record.',
+      deliverable:'A GPT that fetches live Airtable records on demand.',
+      prereqs:['ChatGPT Plus account','An Airtable account (free tier works)','~30 minutes']
+    }
+  },
+  flowise:{
+    sheets:{
+      title:'Agent That Reads Your Spreadsheet',
+      icon:'📊',
+      scenario:`You're building a data analyst agent in Flowise. The agent will use a <strong>Google Sheets Tool node</strong> to retrieve the latest 10 rows from a performance tracking sheet when asked — no API calls to write, just node configuration.`,
+      action:'Configure a Google Sheets node in Flowise and connect it to a chatflow. Query the sheet via chat.',
+      deliverable:'A Flowise chatflow where the agent can read your spreadsheet and summarize the data.',
+      prereqs:['Flowise Cloud account or local install (Node 18+)','Google account with OAuth enabled','~35 minutes']
+    },
+    slack:{
+      title:'Agent That Sends Alerts to Slack',
+      icon:'💬',
+      scenario:`You're building a monitoring agent that sends a Slack alert when triggered. In Flowise you'll use the <strong>Slack Tool node</strong> with an Incoming Webhook URL to post a structured message to a channel — useful for pipeline alerts, approval requests, or status updates.`,
+      action:'Configure a Slack Tool node in Flowise connected to an Incoming Webhook. Trigger a message via chat.',
+      deliverable:'A Flowise chatflow that sends a real Slack message when prompted.',
+      prereqs:['Flowise Cloud or local install','A Slack workspace with webhook access','~30 minutes']
+    },
+    airtable:{
+      title:'Agent That Creates Airtable Records',
+      icon:'🗃️',
+      scenario:`You're building a lead capture agent. When someone describes a new prospect in chat, the agent calls the <strong>Airtable Tool node</strong> and creates a new record in your CRM base — populating the Name, Status, and Source fields automatically.`,
+      action:'Configure an Airtable Tool node in Flowise to create a new record from a natural language prompt.',
+      deliverable:'A Flowise agent that writes new records to Airtable on command.',
+      prereqs:['Flowise Cloud or local install','Airtable account with a base and API key','~35 minutes']
+    }
+  },
+  relevance:{
+    sheets:{
+      title:'Tool That Retrieves Spreadsheet Data',
+      icon:'📊',
+      scenario:`In Relevance AI you'll build a <strong>Tool</strong> (not just an agent) that reads a specific range from a Google Sheet. Then you'll attach it to an agent and ask it a question that requires it to pull from the sheet — testing the full retrieval loop.`,
+      action:'Build a Google Sheets retrieval Tool in Relevance AI and attach it to an agent. Run a live query.',
+      deliverable:'A Relevance AI agent with a working Sheets tool that surfaces real data on demand.',
+      prereqs:['Relevance AI free account','Google account','~25 minutes']
+    },
+    slack:{
+      title:'Agent That Notifies via Slack',
+      icon:'💬',
+      scenario:`You'll configure a Slack <strong>Send Message</strong> tool in Relevance AI's native tool library — no webhook setup required. Attach it to an agent and trigger a Slack notification with a specific structured message.`,
+      action:'Configure the native Slack tool in Relevance AI, attach to agent, and trigger a Slack message.',
+      deliverable:'A Relevance AI agent that sends Slack notifications when instructed.',
+      prereqs:['Relevance AI free account','Slack workspace where you are an admin','~20 minutes']
+    },
+    airtable:{
+      title:'Agent That Reads Your CRM Base',
+      icon:'🗃️',
+      scenario:`Relevance AI has a native Airtable integration. You'll configure a <strong>List Records</strong> tool pointing at your CRM base, attach it to an agent, and ask questions that force the agent to retrieve and reason about live records.`,
+      action:'Configure native Airtable List Records tool in Relevance AI. Query via chat.',
+      deliverable:'A Relevance AI agent that retrieves and summarizes live Airtable data.',
+      prereqs:['Relevance AI free account','Airtable account with a populated base','~20 minutes']
+    }
+  }
+};
+
+function buildMission(){
+  const m=MISSIONS[chosenPlatform][chosenTool];
+  const pCol={gpts:'#22c55e',flowise:'#3b82f6',relevance:'#a855f7'}[chosenPlatform];
+  document.getElementById('missionTitle').innerHTML=`Mission: <span class="red">${m.title}</span>`;
+  document.getElementById('missionContent').innerHTML=`
+    <div class="mission-badge">
+      <span class="mission-icon">${m.icon}</span>
+      <div class="mission-text">
+        <strong>${PLATFORM_NAMES[chosenPlatform]} + ${TOOL_NAMES[chosenTool]}</strong>
+        <span>${m.action}</span>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:16px;padding:22px 24px">
+      <div class="eyebrow" style="margin-bottom:8px">The Scenario</div>
+      <p style="font-size:.95rem;color:var(--gray-lt);line-height:1.75">${m.scenario}</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+      <div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:var(--r-lg);padding:18px">
+        <div style="font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:8px">✓ Your Deliverable</div>
+        <p style="font-size:.9rem;color:var(--gray-lt);line-height:1.6">${m.deliverable}</p>
+      </div>
+      <div style="background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:var(--r-lg);padding:18px">
+        <div style="font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin-bottom:8px">📋 Prerequisites</div>
+        <ul style="font-size:.88rem;color:var(--gray-lt);line-height:1.7;list-style:none;padding:0">${m.prereqs.map(p=>`<li style="padding:2px 0">→ ${p}</li>`).join('')}</ul>
+      </div>
+    </div>
+    <div class="callout callout-tip">
+      <strong>🔒 Privacy note:</strong> Use a test spreadsheet or workspace — not production data. For this lab, dummy data (fake names, placeholder rows) is all you need to prove the connection works.
+    </div>`;
+}
+
+// ─── BUILD GUIDE ─────────────────────────────────────────────────────────────
+const BUILD_GUIDES={
+  gpts_sheets:[
+    {title:'Set Up Your Test Google Sheet',icon:'📊',
+     body:`Open <strong>Google Sheets</strong> and create a new sheet called <code>intake-queue</code>. In row 1, add three column headers: <code>Patient_ID</code>, <code>Status</code>, and <code>Submitted_At</code>. Add 2–3 dummy rows of fake data (e.g. <code>PT-001</code>, <code>Pending Review</code>, <code>2025-01-13 08:42</code>). Copy the <strong>Spreadsheet ID</strong> from the URL — it's the long string between <code>/d/</code> and <code>/edit</code>.`,
+     tip:`The Spreadsheet ID looks like this: <code>1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms</code> — it's not the full URL.`,
+     docs:[{label:'Google Sheets API Overview',url:'https://developers.google.com/sheets/api/guides/concepts'},{label:'Find Your Sheet ID',url:'https://developers.google.com/sheets/api/guides/concepts#spreadsheet_id'}]
+    },
+    {title:'Enable the Google Sheets API',icon:'🔑',
+     body:`Go to <strong>console.cloud.google.com</strong> → New Project → name it <code>gpts-sheets-lab</code>. In the sidebar click <strong>APIs & Services → Library</strong>. Search for "Google Sheets API" and click <strong>Enable</strong>. Then go to <strong>APIs & Services → Credentials → Create Credentials → API Key</strong>. Copy the key — you'll use it in the next step. `,
+     warn:`⚠️ Restrict your API key: in the key settings, under "API restrictions" select "Google Sheets API" only. This prevents the key from being abused if it's ever exposed.`,
+     docs:[{label:'Create API Key',url:'https://developers.google.com/sheets/api/quickstart/js#set_up_your_environment'},{label:'Google Cloud Console',url:'https://console.cloud.google.com'}]
+    },
+    {title:'Open GPTs Builder & Add an Action',icon:'🤖',
+     body:`Go to <strong>chat.openai.com</strong> → click your profile → <strong>My GPTs → Create a GPT</strong>. Name it <code>Intake Queue Agent</code>. Click the <strong>Configure</strong> tab. Scroll down to <strong>Actions</strong> and click <strong>Create new action</strong>. You'll see an OpenAPI schema editor — this is where you define what external endpoints the GPT can call.`,
+     tip:`GPT Actions use the <strong>OpenAPI 3.1 specification</strong>. You describe your endpoint as a schema and GPT figures out when and how to call it based on the user's message.`,
+     docs:[{label:'GPT Actions Overview',url:'https://platform.openai.com/docs/actions/introduction'},{label:'OpenAPI Schema Reference',url:'https://platform.openai.com/docs/actions/getting-started/openapi-schema'}]
+    },
+    {title:'Paste the Google Sheets OpenAPI Schema',icon:'📋',
+     body:`In the schema editor, paste the following (replacing <code>YOUR_SHEET_ID</code> with your actual Spreadsheet ID and <code>YOUR_API_KEY</code> with your API key):`,
+     code:`openapi: 3.1.0
+info:
+  title: Google Sheets Reader
+  version: 1.0.0
+servers:
+  - url: https://sheets.googleapis.com
+paths:
+  /v4/spreadsheets/{spreadsheetId}/values/{range}:
+    get:
+      operationId: getSheetData
+      summary: Read rows from Google Sheets
+      parameters:
+        - name: spreadsheetId
+          in: path
+          required: true
+          schema:
+            type: string
+            default: "YOUR_SHEET_ID"
+        - name: range
+          in: path
+          required: true
+          schema:
+            type: string
+            default: "intake-queue!A1:C10"
+        - name: key
+          in: query
+          required: true
+          schema:
+            type: string
+            default: "YOUR_API_KEY"`,
+     tip:`The <code>default</code> values pre-fill the parameters so GPT can call the endpoint without the user needing to know your Sheet ID. The range <code>intake-queue!A1:C10</code> reads the first 10 rows of your sheet.`,
+     docs:[{label:'Sheets values.get endpoint',url:'https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/get'}]
+    },
+    {title:'Save & Test in the GPT Playground',icon:'▶️',
+     body:`Click <strong>Save</strong> on the schema. Now switch to the <strong>Preview</strong> pane on the right. Type: <code>Check the intake queue and show me the latest entries</code>. The GPT should call your action — you'll see a notice that says "Used Intake Queue Agent". The response should include the row data from your spreadsheet.`,
+     warn:`If you see "Error calling tool" — check that your API key is correct and that you enabled the Sheets API in Google Cloud. The most common issue is a typo in the Spreadsheet ID.`,
+     docs:[{label:'Troubleshoot GPT Actions',url:'https://platform.openai.com/docs/actions/authentication'}]
+    }
+  ],
+  gpts_slack:[
+    {title:'Create a Slack Incoming Webhook',icon:'💬',
+     body:`In your Slack workspace go to <strong>api.slack.com/apps → Create New App → From Scratch</strong>. Name it <code>GPT Notifier</code> and pick your workspace. In the app settings sidebar click <strong>Incoming Webhooks → Activate Incoming Webhooks → Add New Webhook to Workspace</strong>. Choose the channel (e.g. <code>#general</code> or create <code>#gpt-test</code>). Copy the <strong>Webhook URL</strong> — it starts with <code>https://hooks.slack.com/services/…</code>`,
+     docs:[{label:'Slack Incoming Webhooks Guide',url:'https://api.slack.com/messaging/webhooks'},{label:'Slack API App Directory',url:'https://api.slack.com/apps'}]
+    },
+    {title:'Create Your GPT in GPTs Builder',icon:'🤖',
+     body:`Go to <strong>chat.openai.com → My GPTs → Create a GPT</strong>. Name it <code>Slack Alert Agent</code>. In the <strong>Configure</strong> tab scroll to <strong>Actions → Create new action</strong>. You'll define a POST endpoint pointing at your Slack webhook.`,
+     docs:[{label:'GPT Actions — POST requests',url:'https://platform.openai.com/docs/actions/getting-started'}]
+    },
+    {title:'Paste the Slack OpenAPI Schema',icon:'📋',
+     body:`Paste this schema (replacing <code>TEAM_ID</code>, <code>SERVICE_ID</code>, and <code>TOKEN</code> with the three segments of your webhook URL):`,
+     code:`openapi: 3.1.0
+info:
+  title: Slack Notifier
+  version: 1.0.0
+servers:
+  - url: https://hooks.slack.com
+paths:
+  /services/TEAM_ID/SERVICE_ID/TOKEN:
+    post:
+      operationId: sendSlackMessage
+      summary: Send a message to Slack
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                  description: The message to send to Slack`,
+     tip:`Your webhook URL has three path segments after <code>/services/</code> — these become the three path components in your server URL. Keep them private.`
+    },
+    {title:'Set Authentication to None',icon:'🔓',
+     body:`Since Slack webhooks use a secret URL for authentication (not a header), set <strong>Authentication</strong> in the Actions panel to <strong>None</strong>. The security is in the URL itself. Click <strong>Save</strong>.`,
+     docs:[{label:'Slack Webhook Security',url:'https://api.slack.com/messaging/webhooks#security'}]
+    },
+    {title:'Test: Trigger a Slack Message',icon:'▶️',
+     body:`In the GPT preview panel type: <code>Send a Slack message that says: "GPT integration test successful — BAA Lab 7"</code>. You should see the GPT call the <code>sendSlackMessage</code> action. Switch to your Slack workspace — the message should appear in the channel within 2–3 seconds.`,
+     warn:`⚠️ If Slack shows "channel not found" — make sure you selected the channel during webhook setup. If the message doesn't appear at all, re-copy the webhook URL from api.slack.com/apps — it may have been regenerated.`
+    }
+  ],
+  gpts_airtable:[
+    {title:'Create an Airtable Test Base',icon:'🗃️',
+     body:`Log in to <strong>airtable.com</strong> and click <strong>Add a base → Start from scratch</strong>. Name it <code>Customer Escalations</code>. Rename the default table to <code>Escalations</code>. Add columns: <code>Customer Name</code> (text), <code>Status</code> (single select: Open/Closed), <code>Assigned Rep</code> (text). Add 3 dummy rows.`,
+     docs:[{label:'Airtable Getting Started',url:'https://support.airtable.com/docs/getting-started-with-airtable'}]
+    },
+    {title:'Get Your Airtable API Token',icon:'🔑',
+     body:`Go to <strong>airtable.com/create/tokens → Create new token</strong>. Name it <code>gpts-lab</code>. Under <strong>Scopes</strong> add: <code>data.records:read</code>. Under <strong>Access</strong> add your <code>Customer Escalations</code> base. Click <strong>Create token</strong> and copy it — you won't see it again.`,
+     warn:`⚠️ Keep this token secret. Add the minimum scopes needed — only <code>data.records:read</code> for this lab.`,
+     docs:[{label:'Airtable Personal Access Tokens',url:'https://support.airtable.com/docs/creating-and-using-api-keys-and-access-tokens'}]
+    },
+    {title:'Find Your Base ID & Table ID',icon:'🔍',
+     body:`Open your base in Airtable. The URL looks like: <code>airtable.com/appXXXXXXXX/tblYYYYYYYY/…</code>. The part starting with <code>app</code> is your <strong>Base ID</strong>. The part starting with <code>tbl</code> is your <strong>Table ID</strong>. Copy both.`,
+     docs:[{label:'Airtable Web API Reference',url:'https://airtable.com/developers/web/api/introduction'}]
+    },
+    {title:'Create the GPT Action Schema',icon:'📋',
+     body:`In GPTs Builder create a new GPT named <code>Escalation Lookup</code>. Add an Action with this schema (replace the IDs):`,
+     code:`openapi: 3.1.0
+info:
+  title: Airtable Escalations Reader
+  version: 1.0.0
+servers:
+  - url: https://api.airtable.com
+paths:
+  /v0/YOUR_BASE_ID/YOUR_TABLE_ID:
+    get:
+      operationId: listEscalations
+      summary: List escalation records
+      parameters:
+        - name: maxRecords
+          in: query
+          schema:
+            type: integer
+            default: 5`,
+     docs:[{label:'Airtable List Records API',url:'https://airtable.com/developers/web/api/list-records'}]
+    },
+    {title:'Add Bearer Token Authentication',icon:'🔐',
+     body:`In the Actions panel, under <strong>Authentication</strong>, select <strong>API Key</strong>. Set Auth Type to <strong>Bearer</strong>. Paste your Airtable personal access token. Click <strong>Save</strong>. Then test in the preview: type <code>Show me the open escalations</code> and confirm the GPT returns records from your base.`,
+     tip:`Bearer authentication adds <code>Authorization: Bearer YOUR_TOKEN</code> to every API request header automatically.`,
+     docs:[{label:'GPT Actions Authentication',url:'https://platform.openai.com/docs/actions/authentication'}]
+    }
+  ],
+  flowise_sheets:[
+    {title:'Install or Open Flowise',icon:'🌊',
+     body:`<strong>Option A — Cloud:</strong> Sign up at <strong>flowiseai.com</strong> — free tier works for this lab.<br/><br/><strong>Option B — Local:</strong> Run <code>npm install -g flowise</code> then <code>npx flowise start</code> in your terminal. Open <code>localhost:3000</code> in your browser.`,
+     docs:[{label:'Flowise Installation Guide',url:'https://docs.flowiseai.com/getting-started'},{label:'Flowise Cloud',url:'https://flowiseai.com'}]
+    },
+    {title:'Create a New Chatflow',icon:'⚙️',
+     body:`In Flowise click <strong>Add New → Chatflow</strong>. Name it <code>Sheets Reader Agent</code>. You'll see a blank canvas. Click the <strong>+</strong> button to open the node library. Search for <strong>"Chat OpenAI"</strong> and drag it onto the canvas. Then search for <strong>"Google Sheets"</strong> and add the Google Sheets Tool node.`,
+     docs:[{label:'Flowise Chatflows',url:'https://docs.flowiseai.com/using-flowise/chatflow'},{label:'Flowise Integrations',url:'https://docs.flowiseai.com/integrations'}]
+    },
+    {title:'Configure Google Sheets Credentials',icon:'🔑',
+     body:`Click the Google Sheets node. Under <strong>Connect Credential</strong> click <strong>Create New</strong>. Select <strong>Google Service Account</strong>. You'll need a service account JSON key:<br/><br/>1. In Google Cloud Console go to <strong>IAM & Admin → Service Accounts → Create</strong><br/>2. Give it the role <strong>Viewer</strong><br/>3. Click <strong>Keys → Add Key → JSON</strong> — download the file<br/>4. Paste the JSON content into the Flowise credential field<br/><br/>Then share your Google Sheet with the service account email address (it looks like <code>name@project.iam.gserviceaccount.com</code>).`,
+     warn:`⚠️ The most common error here: forgetting to share the Sheet with the service account email. The API authenticates successfully but returns "Permission denied."`,
+     docs:[{label:'Google Service Accounts',url:'https://cloud.google.com/iam/docs/service-account-overview'},{label:'Flowise Google Sheets Node',url:'https://docs.flowiseai.com/integrations/langchain/tools/google-sheets'}]
+    },
+    {title:'Set the Sheet ID and Connect Nodes',icon:'🔗',
+     body:`In the Google Sheets node, paste your <strong>Spreadsheet ID</strong> and set the <strong>Operation</strong> to <code>Read Sheet</code>. Set the <strong>Range</strong> to <code>Sheet1!A1:D20</code>.<br/><br/>Now connect the nodes: draw a line from <strong>Google Sheets Tool</strong> → <strong>Tools input</strong> of an <strong>OpenAI Functions Agent</strong> node. Connect the agent's output to a <strong>Response</strong> node. Make sure your OpenAI API key is set in the Chat OpenAI node.`,
+     docs:[{label:'Flowise Agent Nodes',url:'https://docs.flowiseai.com/integrations/langchain/agents'}]
+    },
+    {title:'Save & Chat with Your Agent',icon:'▶️',
+     body:`Click the <strong>Save</strong> icon (top right). Then click the <strong>Chat</strong> icon (speech bubble). Type: <code>What's in my spreadsheet?</code>. The agent should call the Google Sheets tool, retrieve your data, and summarize it in plain English.`,
+     tip:`You can see which tools the agent called by clicking the <strong>Thought Process</strong> toggle in the chat — it shows the tool name, input, and output for each call.`
+    }
+  ],
+  flowise_slack:[
+    {title:'Create a Slack App with Incoming Webhooks',icon:'💬',
+     body:`Go to <strong>api.slack.com/apps → Create New App → From Scratch</strong>. Name it <code>Flowise Notifier</code>. Enable <strong>Incoming Webhooks</strong> and add a webhook to your test channel. Copy the webhook URL.`,
+     docs:[{label:'Slack Incoming Webhooks',url:'https://api.slack.com/messaging/webhooks'}]
+    },
+    {title:'Set Up Flowise Chatflow',icon:'🌊',
+     body:`In Flowise create a new Chatflow named <code>Slack Alert Agent</code>. Add an <strong>OpenAI Functions Agent</strong> node. Search the node library for <strong>"Custom Tool"</strong> — this lets you define any HTTP call as a tool.`,
+     docs:[{label:'Flowise Custom Tool',url:'https://docs.flowiseai.com/integrations/langchain/tools/custom-tool'}]
+    },
+    {title:'Configure the Custom Slack Tool',icon:'⚙️',
+     body:`Click the Custom Tool node. Set:<br/><br/>• <strong>Name:</strong> <code>send_slack_message</code><br/>• <strong>Description:</strong> <code>Sends a message to the team Slack channel. Use this when you need to notify the team.</code><br/>• <strong>Input Schema:</strong> <code>{"text": {"type": "string", "description": "The message to send"}}</code><br/>• <strong>Method:</strong> POST<br/>• <strong>URL:</strong> (paste your Slack webhook URL)<br/>• <strong>Body:</strong> <code>{"text": "{{text}}"}</code>`,
+     tip:`The description is critical — the agent decides when to call a tool based on whether the description matches the user's intent. Make it specific about when to use it.`
+    },
+    {title:'Connect and Save',icon:'🔗',
+     body:`Connect: <strong>send_slack_message Tool → Tools input</strong> of the OpenAI Functions Agent. Connect the agent output to a Response node. Save the chatflow.`
+    },
+    {title:'Trigger a Test Message',icon:'▶️',
+     body:`Open the Chat panel. Type: <code>Send a Slack message to tell the team the weekly report is ready</code>. Watch your Slack channel — the message should arrive within 3 seconds. In the Flowise chat you'll see the tool output confirming the POST succeeded (HTTP 200).`,
+     warn:`⚠️ If you get a 403 error, the webhook URL may have been regenerated. Re-copy it from api.slack.com/apps.`
+    }
+  ],
+  flowise_airtable:[
+    {title:'Get Your Airtable API Token & IDs',icon:'🔑',
+     body:`In Airtable go to <strong>airtable.com/create/tokens</strong>. Create a token with <code>data.records:read</code> and <code>data.records:write</code> scopes — you'll need write access to create records. Add access to your target base. Copy the token, Base ID (from the URL), and Table ID.`,
+     docs:[{label:'Airtable API Tokens',url:'https://support.airtable.com/docs/creating-and-using-api-keys-and-access-tokens'},{label:'Airtable REST API',url:'https://airtable.com/developers/web/api/introduction'}]
+    },
+    {title:'Create Flowise Chatflow',icon:'🌊',
+     body:`In Flowise create a new Chatflow: <code>Airtable Lead Capture</code>. Add an <strong>OpenAI Functions Agent</strong> and a <strong>Custom Tool</strong> node.`
+    },
+    {title:'Configure the Airtable Create-Record Tool',icon:'⚙️',
+     body:`In the Custom Tool node set:<br/><br/>• <strong>Name:</strong> <code>create_lead_record</code><br/>• <strong>Description:</strong> <code>Creates a new lead record in Airtable. Use when the user provides a new prospect's name and company.</code><br/>• <strong>Method:</strong> POST<br/>• <strong>URL:</strong> <code>https://api.airtable.com/v0/YOUR_BASE_ID/YOUR_TABLE_ID</code><br/>• <strong>Headers:</strong> <code>Authorization: Bearer YOUR_TOKEN</code>, <code>Content-Type: application/json</code><br/>• <strong>Body:</strong><br/><code>{"fields": {"Name": "{{name}}", "Status": "New", "Source": "AI Agent"}}</code>`,
+     tip:`Keep the Body schema simple for your first integration. Add more fields after the basic connection is working.`,
+     docs:[{label:'Airtable Create Records API',url:'https://airtable.com/developers/web/api/create-records'}]
+    },
+    {title:'Connect, Save, and Test',icon:'▶️',
+     body:`Connect the tool to the agent. Save. Open chat and type: <code>Add a new lead: Sarah Chen from Acme Corp</code>. After the agent responds, open your Airtable base — you should see a new row with Name: "Sarah Chen" and Status: "New" created by the agent.`,
+     callout_success:`Success looks like: a new row in Airtable with the name you provided and Status = "New". The agent should confirm the action in chat.`
+    }
+  ],
+  relevance_sheets:[
+    {title:'Create a Relevance AI Account',icon:'🧬',
+     body:`Go to <strong>relevanceai.com → Sign Up Free</strong>. The free tier gives you enough credits for this lab. Once logged in, click <strong>Tools → Create Tool</strong> from the left sidebar.`,
+     docs:[{label:'Relevance AI Quickstart',url:'https://documentation.relevanceai.com/introduction'},{label:'Relevance AI Tools',url:'https://documentation.relevanceai.com/build-custom-tools/tool-steps'}]
+    },
+    {title:'Create a Google Sheets Read Tool',icon:'📊',
+     body:`Name your tool <code>Read Intake Queue</code>. In the tool builder click <strong>Add Step → API Call</strong>. Set:<br/><br/>• <strong>Method:</strong> GET<br/>• <strong>URL:</strong> <code>https://sheets.googleapis.com/v4/spreadsheets/YOUR_SHEET_ID/values/Sheet1!A1:D10</code><br/>• <strong>Params:</strong> Add <code>key</code> → your Google API key<br/><br/>Click <strong>Run Step</strong> to test it immediately — you should see your sheet data in the output panel.`,
+     tip:`Relevance AI shows you the raw API response in real-time as you configure. This is a huge advantage for debugging — you know within 10 seconds whether your API key and Sheet ID are correct.`,
+     docs:[{label:'Relevance AI API Step',url:'https://documentation.relevanceai.com/build-custom-tools/tool-steps/api-call'}]
+    },
+    {title:'Add an Output Transform Step',icon:'⚙️',
+     body:`After the API step, click <strong>Add Step → LLM</strong>. In the prompt write: <code>Here is the raw spreadsheet data: {{step_1.output}}. Summarize the key entries in 3 bullet points.</code> This turns raw JSON into a readable summary — the LLM step processes the data inline.`,
+     docs:[{label:'Relevance AI LLM Step',url:'https://documentation.relevanceai.com/build-custom-tools/tool-steps/llm'}]
+    },
+    {title:'Attach Tool to an Agent',icon:'🔗',
+     body:`Click <strong>Agents → Create Agent</strong>. Name it <code>Intake Analyst</code>. In the agent settings under <strong>Tools</strong>, click <strong>Add Tool</strong> and select your <code>Read Intake Queue</code> tool. Set the agent's system prompt: <code>You are a clinical ops assistant. When asked about the intake queue, always retrieve the latest data from the spreadsheet tool.</code>`,
+     docs:[{label:'Relevance AI Agents',url:'https://documentation.relevanceai.com/agent/introduction'}]
+    },
+    {title:'Run a Live Query',icon:'▶️',
+     body:`Click <strong>Talk to Agent</strong>. Type: <code>What's in the intake queue right now?</code>. The agent will call your tool, retrieve the sheet data, and return a summary. You'll see a <strong>Tool Used: Read Intake Queue</strong> badge in the response confirming it ran.`,
+     callout_success:`Look for the tool badge in the response and verify the data matches your spreadsheet.`
+    }
+  ],
+  relevance_slack:[
+    {title:'Create Your Relevance AI Account',icon:'🧬',
+     body:`Sign up at <strong>relevanceai.com</strong>. Free tier is fine. Navigate to <strong>Tools → Create Tool</strong>.`,
+     docs:[{label:'Relevance AI Docs',url:'https://documentation.relevanceai.com'}]
+    },
+    {title:'Create a Slack Incoming Webhook',icon:'💬',
+     body:`In <strong>api.slack.com/apps</strong> create a new app, enable <strong>Incoming Webhooks</strong>, and add a webhook to your test channel. Copy the webhook URL.`,
+     docs:[{label:'Slack Webhooks Guide',url:'https://api.slack.com/messaging/webhooks'}]
+    },
+    {title:'Build the Slack Notification Tool',icon:'⚙️',
+     body:`In Relevance AI create a tool named <code>Send Slack Alert</code>. Add a step: <strong>API Call → POST</strong>. Set the URL to your Slack webhook URL. In the Request Body add:<br/><br/><code>{"text": "{{message}}"}</code><br/><br/>Add an Input variable called <code>message</code> (type: string). Click <strong>Run Step</strong> with a test message — check Slack immediately to confirm delivery.`,
+     tip:`Relevance AI's API step lets you test in real time. If the POST succeeds you'll see HTTP 200 and the text <code>ok</code> in the response body. Check your Slack channel within 5 seconds.`,
+     docs:[{label:'Relevance AI API Call Step',url:'https://documentation.relevanceai.com/build-custom-tools/tool-steps/api-call'}]
+    },
+    {title:'Attach to Agent & Configure Trigger Logic',icon:'🔗',
+     body:`Create an Agent named <code>Alert Agent</code>. Add the <code>Send Slack Alert</code> tool. Set the system prompt: <code>You notify the team via Slack when given information to broadcast. Always use the Slack tool for any notification request. Format messages clearly and concisely.</code>`,
+     docs:[{label:'Relevance AI Agent Setup',url:'https://documentation.relevanceai.com/agent/introduction'}]
+    },
+    {title:'Trigger the Agent',icon:'▶️',
+     body:`In the agent chat type: <code>Send a Slack message: "The weekly AI report is ready — check the dashboard for this week's insights."</code> Watch your Slack channel for the message. In the agent response you'll see a tool call badge confirming the webhook fired.`,
+     warn:`⚠️ If the message doesn't arrive: verify the webhook URL is current (Slack regenerates them if you reinstall the app). Paste the webhook URL directly in a curl test to isolate the issue.`
+    }
+  ],
+  relevance_airtable:[
+    {title:'Set Up Airtable & Get Your Token',icon:'🗃️',
+     body:`Create an Airtable base with a <code>Leads</code> table. Add columns: Name, Company, Status. Insert 3 dummy rows. Go to <strong>airtable.com/create/tokens</strong> and create a token with <code>data.records:read</code> scope. Copy your Base ID from the URL and the Table ID.`,
+     docs:[{label:'Airtable Token Setup',url:'https://support.airtable.com/docs/creating-and-using-api-keys-and-access-tokens'}]
+    },
+    {title:'Build the Airtable List Records Tool',icon:'⚙️',
+     body:`In Relevance AI create a tool named <code>List Leads</code>. Add an API Call step:<br/><br/>• <strong>Method:</strong> GET<br/>• <strong>URL:</strong> <code>https://api.airtable.com/v0/YOUR_BASE_ID/Leads</code><br/>• <strong>Headers:</strong> <code>Authorization: Bearer YOUR_TOKEN</code><br/>• <strong>Params:</strong> <code>maxRecords: 10</code><br/><br/>Click <strong>Run Step</strong>. You should see your Airtable records in the output panel as JSON.`,
+     docs:[{label:'Airtable List Records',url:'https://airtable.com/developers/web/api/list-records'}]
+    },
+    {title:'Add LLM Summarization Step',icon:'🧠',
+     body:`After the API step, add an LLM step with the prompt: <code>Here are the leads from Airtable: {{step_1.output.records}}. List each lead's name, company, and status in a clean formatted list.</code> Run the full tool — the output should be a readable summary of your Airtable data.`
+    },
+    {title:'Create & Configure Agent',icon:'🔗',
+     body:`Create an Agent: <code>Lead Intelligence Agent</code>. Add the <code>List Leads</code> tool. System prompt: <code>You are a sales intelligence assistant. When asked about leads or prospects, use the Airtable tool to retrieve current data before answering. Never answer from memory alone.</code>`
+    },
+    {title:'Run a Live Query',icon:'▶️',
+     body:`In the agent chat type: <code>Who are our current leads and what is their status?</code>. The agent should call the Airtable tool and return a formatted summary of your real base data. Confirm the names match what's actually in your Airtable.`,
+     callout_success:`Verify: the agent's answer includes the exact names and statuses from your Airtable base — not made-up data.`
+    }
+  ]
+};
+
+function buildBuildGuide(){
+  const key=`${chosenPlatform}_${chosenTool}`;
+  const steps=BUILD_GUIDES[key]||[];
+  totalSteps=steps.length;
+
+  document.getElementById('buildSummaryBar').innerHTML=`
+    <div class="mission-badge">
+      <span class="mission-icon">${{gpts:'🤖',flowise:'🌊',relevance:'🧬'}[chosenPlatform]}</span>
+      <div class="mission-text">
+        <strong>Your Stack: ${PLATFORM_NAMES[chosenPlatform]} + ${TOOL_NAMES[chosenTool]}</strong>
+        <span>Complete all steps in order. Mark each done before moving to the next.</span>
+      </div>
+    </div>`;
+
+  const container=document.getElementById('buildSteps');
+  container.innerHTML='';
+  steps.forEach((step,i)=>{
+    const el=document.createElement('div');
+    el.className='step-card'+(i===0?' active':'');
+    el.id=`step-${i}`;
+
+    let inner=`
+      <div class="step-num" id="stepnum-${i}">${i+1}</div>
+      <div class="step-head">
+        <div class="step-title">${step.icon} ${step.title}</div>
+      </div>
+      <div class="step-body">${step.body}</div>`;
+
+    if(step.code){
+      inner+=`<div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><pre>${escHtml(step.code)}</pre></div>`;
+    }
+    if(step.tip){
+      inner+=`<div class="callout callout-tip" style="margin-top:12px">💡 <strong>Tip:</strong> ${step.tip}</div>`;
+    }
+    if(step.warn){
+      inner+=`<div class="callout callout-warn" style="margin-top:12px">${step.warn}</div>`;
+    }
+    if(step.callout_success){
+      inner+=`<div class="callout callout-success" style="margin-top:12px">✓ <strong>Expected result:</strong> ${step.callout_success}</div>`;
+    }
+    if(step.docs&&step.docs.length){
+      inner+=`<div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:6px">`;
+      step.docs.forEach(d=>{
+        inner+=`<a class="doc-link" href="${d.url}" target="_blank" rel="noopener">📖 ${d.label} ↗</a>`;
+      });
+      inner+=`</div>`;
+    }
+    inner+=`<button class="step-mark-btn" id="stepbtn-${i}" onclick="completeStep(${i},${steps.length})">Mark Step ${i+1} Complete ✓</button>`;
+
+    el.innerHTML=inner;
+    container.appendChild(el);
+  });
+}
+
+function escHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function completeStep(idx,total){
+  stepsCompleted++;
+  const card=document.getElementById(`step-${idx}`);
+  card.classList.remove('active');
+  card.classList.add('complete');
+  const btn=document.getElementById(`stepbtn-${idx}`);
+  btn.classList.add('done');
+  btn.textContent='✓ Done';
+  const next=document.getElementById(`step-${idx+1}`);
+  if(next){
+    next.classList.add('active');
+    document.getElementById(`stepnum-${idx+1}`).style.background='var(--GA-red)';
+    document.getElementById(`stepnum-${idx+1}`).style.borderColor='var(--GA-red)';
+    document.getElementById(`stepnum-${idx+1}`).style.color='#fff';
+  }
+  if(stepsCompleted>=total){
+    document.getElementById('buildNextBtn').style.display='inline-flex';
+  }
+}
+
+function copyCode(btn){
+  const pre=btn.nextElementSibling;
+  navigator.clipboard.writeText(pre.textContent).then(()=>{
+    btn.textContent='Copied!';
+    setTimeout(()=>btn.textContent='Copy',2000);
+  });
+}
+
+// ─── TEST SECTION ─────────────────────────────────────────────────────────────
+const TEST_PROMPTS={
+  gpts_sheets:    {prompt:'"Check the intake queue and show me the latest entries"',expected:'The GPT should return a table or list containing the rows from your spreadsheet with the column values you defined.'},
+  gpts_slack:     {prompt:'"Send a Slack message: GPT integration test successful — BAA Lab 7"',expected:'The message appears in your Slack channel within 3 seconds. The GPT confirms the action was taken.'},
+  gpts_airtable:  {prompt:'"Show me the open escalations from the database"',expected:'The GPT returns records from your Airtable base with the Customer Name, Status, and Assigned Rep fields.'},
+  flowise_sheets: {prompt:'"What\'s in my spreadsheet? Give me a summary."',expected:'The agent calls the Google Sheets tool, retrieves your rows, and returns a structured summary. Check the Thought Process panel to confirm the tool was used.'},
+  flowise_slack:  {prompt:'"Send a Slack message to tell the team the weekly report is ready"',expected:'The agent POSTs to your webhook. Your Slack channel receives the message. The chat shows a 200 OK response from the Slack API.'},
+  flowise_airtable:{prompt:'"Add a new lead: Sarah Chen from Acme Corp"',expected:'A new row appears in your Airtable base within 5 seconds with Name="Sarah Chen", Status="New".'},
+  relevance_sheets:{prompt:'"What\'s in the intake queue right now?"',expected:'The agent runs the tool, fetches your sheet data, and summarizes the entries. A "Tool Used" badge appears in the response.'},
+  relevance_slack: {prompt:'"Send a Slack message: The weekly AI report is ready — check the dashboard"',expected:'The message arrives in your Slack channel. The agent response shows a successful tool call.'},
+  relevance_airtable:{prompt:'"Who are our current leads and what is their status?"',expected:'The agent retrieves and lists leads matching your Airtable records exactly — not made-up names.'},
+};
+
+const TROUBLESHOOT_ITEMS=[
+  {issue:'Authentication Error (401 / 403)',fix:'Your API key or token is incorrect or missing. Re-copy it from the source and re-paste. Check for leading/trailing spaces. Confirm the key hasn\'t been regenerated since you copied it.'},
+  {issue:'Resource Not Found (404)',fix:'Your Sheet ID, Base ID, or Table ID is wrong. Re-copy from the URL. For Airtable, the Base ID starts with "app" and the Table ID starts with "tbl". For Sheets, it\'s the long string between /d/ and /edit in the URL.'},
+  {issue:'"Permission Denied" on Google Sheets',fix:'The service account or API key doesn\'t have access to the Sheet. Share the Sheet with your service account email address (looks like name@project.iam.gserviceaccount.com). Also confirm the Sheets API is enabled in Google Cloud Console.'},
+  {issue:'Slack Message Not Arriving',fix:'Your webhook URL may have been regenerated. Go to api.slack.com/apps → your app → Incoming Webhooks → copy the current URL. Webhook URLs change when the app is reinstalled or the channel is deleted.'},
+  {issue:'Agent Doesn\'t Call the Tool',fix:'The tool description doesn\'t match the user\'s prompt closely enough. Rewrite the tool description to match the words a user would naturally type. Add the phrase "Use when the user asks about [topic]" to the description.'},
+];
+
+function buildTestSection(){
+  const key=`${chosenPlatform}_${chosenTool}`;
+  const tp=TEST_PROMPTS[key];
+  document.getElementById('testContent').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px">
+      <div class="card" style="margin-bottom:0;padding:20px">
+        <div class="eyebrow" style="margin-bottom:8px">Type This Prompt</div>
+        <div class="code-block" style="margin-top:0"><pre>${escHtml(tp.prompt)}</pre></div>
+      </div>
+      <div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:var(--r-lg);padding:20px">
+        <div style="font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:8px">✓ Expected Result</div>
+        <p style="font-size:.88rem;color:var(--gray-lt);line-height:1.65">${tp.expected}</p>
+      </div>
+    </div>
+    <div class="card" style="padding:20px;margin-bottom:0">
+      <div style="font-size:.82rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray-dk);margin-bottom:14px">Testing Protocol — Do These In Order</div>
+      ${['Run the exact prompt shown above — copy-paste it, don\'t paraphrase.','Observe whether the agent shows a tool-use badge, a spinner, or an API call indicator.','Check the external system (Sheets / Slack / Airtable) directly — did the data move?','If something failed, note the error message exactly — it tells you which step broke.','Run the prompt a second time with a variation to confirm it works consistently.'].map((t,i)=>`<div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:.9rem;color:var(--gray-lt);line-height:1.55"><span style="font-family:'JetBrains Mono',monospace;color:var(--GA-red);font-size:.85rem;font-weight:700;flex-shrink:0;padding-top:1px">0${i+1}</span>${t}</div>`).join('')}
+    </div>`;
+
+  document.getElementById('troubleshootContent').innerHTML=`
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gray-dk);margin-bottom:12px">Troubleshooting Guide — 5 Most Common Failures</div>
+    ${TROUBLESHOOT_ITEMS.map((item,i)=>`
+    <div style="border-left:3px solid var(--GA-red);padding:12px 16px;margin-bottom:10px;background:var(--black2);border-radius:0 var(--r) var(--r) 0">
+      <div style="font-weight:700;font-size:.9rem;color:#fff;margin-bottom:4px">${i+1}. ${item.issue}</div>
+      <div style="font-size:.85rem;color:var(--gray-lt);line-height:1.6">→ ${item.fix}</div>
+    </div>`).join('')}`;
+}
+
+// ─── VERIFY SECTION ───────────────────────────────────────────────────────────
+const VERIFY_ITEMS={
+  sheets:[
+    {label:'Platform connection established',desc:'Your platform (GPTs Builder, Flowise, or Relevance AI) successfully authenticated with the Google Sheets API.',expected:'No 401/403 errors during setup or testing'},
+    {label:'Sheet data retrieved without error',desc:'When you ran the test prompt, the platform returned data from your spreadsheet — not an error message.',expected:'Response contains row values matching your spreadsheet'},
+    {label:'Column mapping is correct',desc:'The column headers in the response match the headers in your actual Sheet.',expected:'Response shows correct field names (not "column_0", "column_1")'},
+    {label:'Agent called the tool — not its memory',desc:'The response was clearly based on live data, not something the LLM hallucinated or recalled from training.',expected:'Tool call badge / Thought Process shows the tool was used'},
+    {label:'Data matches the source',desc:'At least one value in the response exactly matches a value you can see in your Google Sheet right now.',expected:'Open the Sheet and verify a specific cell value appears in the response'},
+    {label:'Second test run also succeeded',desc:'You ran the prompt a second time and got consistent results.',expected:'Both runs return the same data (or updated data if the Sheet changed)'},
+  ],
+  slack:[
+    {label:'Platform connected to Slack webhook',desc:'Your platform authenticated to Slack without a 401/403 error.',expected:'No authentication errors during setup'},
+    {label:'Message delivered to Slack channel',desc:'You can see the test message in your Slack channel.',expected:'Message visible in the channel you configured'},
+    {label:'Message content is correct',desc:'The Slack message contains the exact text you asked the agent to send.',expected:'Message matches your test prompt — not generic placeholder text'},
+    {label:'Delivery was under 5 seconds',desc:'The message arrived in Slack promptly, confirming no timeout or retry loop.',expected:'Message appears within 5 seconds of the agent\'s response'},
+    {label:'Agent used the tool (not just replied in chat)',desc:'The platform shows a tool-use indicator — the agent called the webhook, it didn\'t just type the message in chat.',expected:'Tool call badge / HTTP 200 response visible in logs'},
+    {label:'Second message also delivered',desc:'You sent a different message and it also arrived in Slack.',expected:'Two distinct messages visible in the Slack channel'},
+  ],
+  airtable:[
+    {label:'Platform connected to Airtable API',desc:'No authentication errors. Your platform connected to Airtable using your API token.',expected:'No 401/403 errors'},
+    {label:'Records retrieved or created without error',desc:'The agent read from or wrote to your Airtable base successfully.',expected:'Response includes actual record data or confirms a record was created'},
+    {label:'Record data matches Airtable',desc:'The names, statuses, or other field values in the response match what\'s actually in your Airtable base.',expected:'Open Airtable and verify at least one field value matches the agent\'s response'},
+    {label:'Agent called the Airtable tool',desc:'The response was based on live Airtable data, not hallucinated.',expected:'Tool call indicator visible in the platform'},
+    {label:'Write action created a visible record (if applicable)',desc:'If you ran a create-record action, a new row appeared in your Airtable base.',expected:'New row visible in Airtable with the correct field values'},
+    {label:'Second query returned consistent results',desc:'Running the same query twice returned the same data.',expected:'Consistent responses across two test runs'},
+  ]
+};
+
+function buildVerifySection(){
+  const items=VERIFY_ITEMS[chosenTool];
+  const container=document.getElementById('verifyList');
+  container.innerHTML='';
+  items.forEach((item,i)=>{
+    const el=document.createElement('div');
+    el.className='verify-item';
+    el.innerHTML=`
+      <div class="verify-check" id="vcheck-${i}" onclick="toggleVerify(${i},${items.length})"></div>
+      <div class="verify-label">
+        <strong>${i+1}. ${item.label}</strong>
+        <span>${item.desc}</span>
+        <span class="expected">Expected: ${item.expected}</span>
+      </div>`;
+    container.appendChild(el);
+  });
+  document.getElementById('verifyProgress').innerHTML=`<div style="font-size:.88rem;color:var(--gray)">Checked: <span id="verifyCount" style="color:var(--GA-red);font-weight:700">0</span> / ${items.length} — need 5 to complete</div>`;
+}
+
+function toggleVerify(i, total){
+  const el=document.getElementById('vcheck-'+i);
+  if(verifyChecked.has(i)){
+    verifyChecked.delete(i);
+    el.classList.remove('checked');
+    el.textContent='';
+  } else {
+    verifyChecked.add(i);
+    el.classList.add('checked');
+    el.textContent='✓';
+  }
+  const count=verifyChecked.size;
+  document.getElementById('verifyCount').textContent=count;
+  document.getElementById('verifyCount').style.color=count>=5?'var(--green)':'var(--GA-red)';
+  if(count>=5){
+    document.getElementById('verifyNextBtn').style.display='inline-flex';
+    sectionScores.verify={earned:count,possible:total};
+    if(!completed.has('verify')){
+      markDone('verify');
+    }
+    if(count===total){
+      showSuccessBurst();
+    }
+  }
+}
+
+function showSuccessBurst(){
+  const existing=document.getElementById('successBurst');
+  if(existing) return;
+  const el=document.createElement('div');
+  el.id='successBurst';
+  el.style.cssText='text-align:center;padding:32px 24px;margin:24px 0;background:linear-gradient(135deg,rgba(34,197,94,.1),rgba(59,130,246,.1));border:1px solid rgba(34,197,94,.3);border-radius:var(--r-lg)';
+  el.innerHTML=`<div class="success-burst" style="font-size:3rem;margin-bottom:12px">🎉</div>
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.8rem;font-weight:900;color:var(--green);margin-bottom:6px">Mission Accomplished!</div>
+    <div style="font-size:.95rem;color:var(--gray-lt)">All 6 verification items checked. Your tool integration is live and working.</div>`;
+  document.getElementById('verifyList').after(el);
+}
+
+// ─── QUIZ ─────────────────────────────────────────────────────────────────────
+const QUESTIONS=[
+  {q:'What is the purpose of an API key or Bearer token when connecting an agent to an external tool?',
+   opts:['It tells the tool which data format to return','It authenticates the agent — proving it has permission to call that tool on your behalf','It specifies which LLM to use for the agent','It sets the rate limit for how often the agent can call the tool'],
+   ans:1,
+   ok:'Correct! Authentication tokens prove identity and authorization. Without them, external APIs reject every request with a 401 Unauthorized error. The key is how the external system knows the caller is allowed in.',
+   bad:'Not quite. An API key or Bearer token is an authentication credential — it proves to the external system that this caller has permission to access the data. Without it, every request returns 401 Unauthorized.'},
+  {q:'In GPTs Builder, what does the OpenAPI schema in an Action define?',
+   opts:['The visual layout of the GPT interface','The exact HTTP endpoint, parameters, method, and authentication the GPT should use when calling an external tool','The system prompt and persona of the GPT','The training data for the GPT'],
+   ans:1,
+   ok:'Correct! An OpenAPI schema is a machine-readable description of an API endpoint — the URL, method (GET/POST), required parameters, and request body structure. GPT reads it to know exactly how to call the tool.',
+   bad:'Not quite. An OpenAPI schema precisely describes the API endpoint: the URL structure, HTTP method, parameters, request body, and authentication type. It\'s what tells GPT exactly how to make the API call.'},
+  {q:'You connect a Flowise agent to Google Sheets but get "Permission Denied" even though your API key is valid. What is the most likely cause?',
+   opts:['The API key is for the wrong Google account','The sheet was not shared with the service account email address used for authentication','The Flowise node has a typo in the range parameter','The OpenAI API key is invalid'],
+   ans:1,
+   ok:'Correct! Service account authentication is a two-step process: the key authenticates the account, but the Sheet must also be explicitly shared with that service account\'s email address. Forgetting step two causes exactly this error.',
+   bad:'Not quite. With service accounts, the API key handles authentication but the Sheet still needs to be explicitly shared with the service account\'s email address (like name@project.iam.gserviceaccount.com). This is the most common Sheets integration mistake.'},
+  {q:'Why is the tool description critical for an agent that has multiple tools?',
+   opts:['The description sets the tool\'s API rate limit','Longer descriptions make the tool run faster','The agent decides which tool to call based on whether the description semantically matches the user\'s prompt','The description is shown to the end user before the tool runs'],
+   ans:2,
+   ok:'Correct! In an agent with multiple tools, the LLM reads all tool descriptions and selects the one whose description best matches the user\'s intent. Vague or overlapping descriptions cause the agent to pick the wrong tool — or no tool at all.',
+   bad:'Not quite. Tool selection is driven by the description. The LLM compares the user\'s message to each tool\'s description and picks the best semantic match. If your description is vague or doesn\'t match how users will phrase requests, the tool never gets called.'},
+  {q:'A Slack Incoming Webhook suddenly stops working after you reinstall the Slack app. What happened?',
+   opts:['The Slack plan was downgraded','Webhook URLs are regenerated when a Slack app is reinstalled — the old URL is no longer valid','The webhook requires OAuth instead of a simple URL','The channel was made private'],
+   ans:1,
+   ok:'Correct! Slack generates a new webhook URL each time you install or reinstall an app, or when you add a new webhook. The old URL becomes invalid immediately. Always re-copy the current URL from api.slack.com/apps after any reinstall.',
+   bad:'Not quite. Slack regenerates webhook URLs on reinstall, making old URLs permanently invalid. Always re-copy the current webhook URL from api.slack.com/apps → your app → Incoming Webhooks after any reinstallation.'},
+  {q:'What is the key difference between using a Custom Tool node in Flowise vs. a pre-built native integration in Relevance AI?',
+   opts:['Native integrations are more expensive to run','Custom Tool nodes require you to know the API endpoint, request format, and authentication — native integrations handle those details for you','Custom Tools are more secure than native integrations','There is no difference — they work identically'],
+   ans:1,
+   ok:'Correct! Pre-built native integrations abstract away the API details — you just configure credentials and select actions. Custom Tool nodes give you full control but require you to know the endpoint URL, HTTP method, headers, and body format yourself.',
+   bad:'Not quite. Native integrations abstract the API layer — you just authenticate and pick an action. Custom Tool nodes give you control but require you to handle the API endpoint, method, headers, and body format manually. Both are valid approaches with different learning curves.'},
+  {q:'After a successful tool integration, why should you run the same test prompt a second time?',
+   opts:['To increase your lab score','To confirm the first result was reproducible and not a one-time cache hit or fluke — real integrations must work consistently',  'To train the agent on your data','Because the first run never counts'],
+   ans:1,
+   ok:'Correct! A single successful test might be a cache hit, a race condition, or a fluke. Running twice confirms the connection is stable, repeatable, and not dependent on temporary state — which is the standard for production readiness.',
+   bad:'Not quite. One successful test could be a fluke, a cache hit, or a race condition. Running the prompt twice confirms the integration is stable and reproducible — the baseline requirement for anything you\'d use in production.'},
+];
+
+function initQuiz(){quizStarted=true;qIdx=0;qScore=0;showQ();}
+function showQ(){
+  qAnswered=false;
+  const q=QUESTIONS[qIdx];
+  document.getElementById('qProg').style.width=(qIdx/QUESTIONS.length*100)+'%';
+  document.getElementById('qMeta').textContent=`Question ${qIdx+1} of ${QUESTIONS.length}`;
+  document.getElementById('qScoreTxt').textContent=`Score: ${qScore} / ${qIdx}`;
+  document.getElementById('quizQ').textContent=q.q;
+  document.getElementById('quizFB').className='fb-box';
+  document.getElementById('quizFB').innerHTML='';
+  document.getElementById('qNextBtn').style.display='none';
+  const L=['A','B','C','D'];
+  document.getElementById('quizOpts').innerHTML=q.opts.map((o,i)=>
+    `<button class="q-opt" onclick="answerQ(${i})" id="opt${i}"><div class="opt-k">${L[i]}</div>${o}</button>`
+  ).join('');
+}
+function answerQ(i){
+  if(qAnswered) return; qAnswered=true;
+  const q=QUESTIONS[qIdx]; const ok=i===q.ans;
+  if(ok) qScore++;
+  document.querySelectorAll('.q-opt').forEach((el,idx)=>{
+    el.classList.add('disabled');
+    if(idx===q.ans) el.classList.add('correct');
+    else if(idx===i&&!ok) el.classList.add('wrong');
+  });
+  const fb=document.getElementById('quizFB');
+  fb.innerHTML=`<span class="fb-icon">${ok?'✓':'✗'}</span><span>${ok?q.ok:q.bad}</span>`;
+  fb.className='fb-box show '+(ok?'ok':'bad');
+  document.getElementById('qScoreTxt').textContent=`Score: ${qScore} / ${qIdx+1}`;
+  document.getElementById('qNextBtn').style.display='inline-flex';
+  if(qIdx===QUESTIONS.length-1) document.getElementById('qNextBtn').textContent='See Results →';
+}
+function nextQ(){qIdx++;if(qIdx>=QUESTIONS.length){showQuizDone();return;}showQ();}
+function showQuizDone(){
+  document.getElementById('quizActive').style.display='none';
+  document.getElementById('quizDone').style.display='block';
+  const pct=Math.round(qScore/QUESTIONS.length*100);
+  sectionScores.quiz={earned:qScore,possible:QUESTIONS.length};
+  document.getElementById('qBadge').innerHTML=`<span class="badge ${pct>=70?'b-green':'b-red'}">${qScore}/${QUESTIONS.length} · ${pct}%</span>`;
+  document.getElementById('qMsg').textContent=pct>=70
+    ?`Excellent work! You scored ${pct}%. You understand how tool authentication, API integration, and agent tool-selection work in real no-code platforms.`
+    :`You scored ${pct}%. Review the Build Guide — focus on authentication, tool description design, and troubleshooting steps. These concepts appear directly in the quiz questions.`;
+  if(pct>=70) markDone('quiz');
+}
+
+// ─── RESULTS ─────────────────────────────────────────────────────────────────
+function buildResults(){
+  markDone('results');
+  const te=Object.values(sectionScores).reduce((s,x)=>s+(x.earned||0),0);
+  const tp=Object.values(sectionScores).reduce((s,x)=>s+(x.possible||0),0);
+  const pct=tp>0?Math.round((te/tp)*100):0;
+  const verPct=sectionScores.verify?Math.round((sectionScores.verify.earned/sectionScores.verify.possible)*100):0;
+  const grade=pct>=90?{l:'Integration Engineer',e:'🔌',m:'Flawless execution — tools, auth, and testing all locked in.'}:
+              pct>=70?{l:'Connector',            e:'⚙️', m:'Strong build. Review the items you missed.'}:
+              pct>=50?{l:'Apprentice Builder',   e:'🔧', m:'Good start — revisit authentication steps.'}:
+                      {l:'Explorer',             e:'🔍', m:'Re-read the Build Guide and retry.'};
+  const circ=2*Math.PI*52, dash=circ*(1-pct/100);
+  const verBadge=verPct>=100?'<span class="badge b-green">LIVE ✓</span>':verPct>=83?'<span class="badge b-yellow">MOSTLY LIVE</span>':'<span class="badge b-red">INCOMPLETE</span>';
+  const breakdown=[
+    {key:'build',  label:'Build Completion',       pos:stepsCompleted, poss:totalSteps||5},
+    {key:'verify', label:'Proof-of-Life Checklist', pos:sectionScores.verify?.earned||0, poss:6},
+    {key:'quiz',   label:'Knowledge Check Quiz',    pos:sectionScores.quiz?.earned||0, poss:7},
+  ];
+  const rows=breakdown.map(item=>{
+    const p=item.poss>0?Math.round((item.pos/item.poss)*100):0;
+    const col=p>=80?'var(--green)':p>=50?'var(--yellow)':'var(--GA-red)';
+    return `<div class="score-row">
+      <div class="score-dot" style="background:${col}"></div>
+      <span style="flex:1;font-size:.9rem;font-weight:500;color:var(--gray-lt)">${item.label}</span>
+      <div class="score-bar-wrap"><div class="score-bar-fill" style="width:${p}%;background:${col}"></div></div>
+      <span style="font-size:.82rem;color:var(--gray);min-width:38px;text-align:right">${item.pos}/${item.poss}</span>
+      <span class="badge" style="background:${p>=80?'rgba(34,197,94,.15)':p>=50?'rgba(245,197,24,.15)':'rgba(232,51,58,.15)'};color:${col};min-width:38px;text-align:center">${p}%</span>
+    </div>`;
+  }).join('');
+  const pName=chosenPlatform?PLATFORM_NAMES[chosenPlatform]:'your platform';
+  const tName=chosenTool?TOOL_NAMES[chosenTool]:'your tool';
+  const takeaways=[
+    `Authentication is not an afterthought — it is the first thing you configure and the first thing you check when something breaks. Every tool connection requires the right credential type: API key, Bearer token, OAuth, or webhook URL. Mixing these up causes 80% of integration failures.`,
+    `Tool descriptions are the agent's routing logic. In a multi-tool agent, the LLM reads descriptions to decide what to call. Vague descriptions cause tool-skipping; precise descriptions like "Use when the user asks about [specific topic]" ensure reliable tool selection.`,
+    `Live testing with observable proof is the only way to confirm an integration works. A successful chat response is not enough — you need to verify the data moved: check your Sheet, open Slack, inspect Airtable. Always test twice to confirm repeatability.`,
+  ].map((t,i)=>`<div class="tk-item"><div class="tk-num">0${i+1}</div><div class="tk-txt">${t}</div></div>`).join('');
+
+  document.getElementById('resultsBody').innerHTML=`
+    <div style="display:flex;align-items:center;gap:28px;flex-wrap:wrap;padding-bottom:36px;border-bottom:1px solid var(--line);margin-bottom:32px">
+      <div class="results-ring">
+        <svg width="120" height="120" style="transform:rotate(-90deg)" viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="52" fill="none" stroke="var(--black3)" stroke-width="8"/>
+          <circle cx="60" cy="60" r="52" fill="none" stroke="var(--GA-red)" stroke-width="8"
+            stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${dash.toFixed(1)}"
+            stroke-linecap="round" style="transition:stroke-dashoffset 1.2s ease"/>
+        </svg>
+        <div class="results-ring-txt"><div class="ring-pct">${pct}%</div><div class="ring-sub">score</div></div>
+      </div>
+      <div>
+        <div style="font-size:2rem;margin-bottom:4px">${grade.e}</div>
+        <h2 style="font-size:clamp(2rem,5vw,2.8rem);margin-bottom:6px">${grade.l}</h2>
+        <p style="color:var(--gray-lt);font-size:.95rem">${grade.m}</p>
+        <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <span style="font-size:.82rem;color:var(--gray-dk);font-family:'JetBrains Mono',monospace">${pName} + ${tName}</span>
+          ${verBadge}
+        </div>
+      </div>
+    </div>
+    <span class="eyebrow">Score Breakdown</span>
+    <div class="card" style="padding:8px 20px;margin-bottom:28px">${rows}</div>
+    <span class="eyebrow">Key Takeaways</span>
+    <div class="card" style="padding:8px 20px;margin-bottom:24px">${takeaways}</div>
+    <div style="background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:var(--r-lg);padding:20px;margin-bottom:16px">
+      <div style="font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin-bottom:10px">Official Documentation Used in This Lab</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        <a class="doc-link" href="https://platform.openai.com/docs/actions/introduction" target="_blank">OpenAI GPT Actions ↗</a>
+        <a class="doc-link" href="https://docs.flowiseai.com" target="_blank">Flowise Docs ↗</a>
+        <a class="doc-link" href="https://documentation.relevanceai.com" target="_blank">Relevance AI Docs ↗</a>
+        <a class="doc-link" href="https://api.slack.com/messaging/webhooks" target="_blank">Slack Webhooks ↗</a>
+        <a class="doc-link" href="https://developers.google.com/sheets/api" target="_blank">Google Sheets API ↗</a>
+        <a class="doc-link" href="https://airtable.com/developers/web/api" target="_blank">Airtable REST API ↗</a>
+      </div>
+    </div>
+    <div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:var(--r-lg);padding:20px">
+      <p style="font-size:.92rem;color:var(--gray-lt);line-height:1.7">
+        🎉 <strong style="color:#fff">You built a real tool-connected agent.</strong><br/>
+        Next module: <strong style="color:#fff">Multi-Step Reasoning Chains</strong> — where you'll chain tool calls together to build agents that complete multi-step tasks autonomously.
+      </p>
+    </div>`;
+}
+</script>
+</body>
+</html>
