@@ -242,7 +242,7 @@ A customer who is distressed. A complaint involving a legal issue. A request tou
 
 ## 5. Lab (60 min)
 
-*Lab details in the Lab Guide document.*
+https://pages.git.generalassemb.ly/Build-AI-Agents/Tools-and-Actions/
 
 ---
 
