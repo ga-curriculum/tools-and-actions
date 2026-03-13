@@ -266,3 +266,8 @@ https://pages.git.generalassemb.ly/Build-AI-Agents/Tools-and-Actions/
 - [n8n — Credential Management](https://docs.n8n.io/credentials/)
 - [Flowise — Tool Configuration Guide](https://docs.flowiseai.com/integrations/tools)
 - NIST — *Principle of Least Privilege* (SP 800-53)
+
+
+---
+
+*General Assembly · Build AI Agents · BAA 16.0 · © 2026*
