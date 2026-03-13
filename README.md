@@ -270,4 +270,4 @@ https://pages.git.generalassemb.ly/Build-AI-Agents/Tools-and-Actions/
 
 ---
 
-*General Assembly · Build AI Agents · BAA 16.0 · © 2026*
+*General Assembly · Build AI Agents · BAA 7.0 · © 2026*
